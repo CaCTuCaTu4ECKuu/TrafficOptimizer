@@ -9,3 +9,6 @@ D:\Programming\Programs\Диплом\Visual_Beta\Visual_Beta\obj\Debug\Visual_Be
 D:\Programming\Programs\Диплом\Visual_Beta\Visual_Beta\obj\Debug\Visual_Beta.csproj.GenerateResource.Cache
 D:\Programming\Programs\Диплом\Visual_Beta\Visual_Beta\obj\Debug\Visual_Beta.exe
 D:\Programming\Programs\Диплом\Visual_Beta\Visual_Beta\obj\Debug\Visual_Beta.pdb
+D:\Programming\Github\TrafficOptimizer\Visual_Beta\bin\Debug\Visual_Beta.exe.config
+D:\Programming\Github\TrafficOptimizer\Visual_Beta\obj\Debug\Visual_Beta.exe
+D:\Programming\Github\TrafficOptimizer\Visual_Beta\obj\Debug\Visual_Beta.pdb

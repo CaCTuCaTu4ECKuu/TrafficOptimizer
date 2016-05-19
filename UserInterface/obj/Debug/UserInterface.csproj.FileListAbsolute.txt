@@ -1,0 +1,14 @@
+D:\Programming\Github\TrafficOptimizer\UserInterface\bin\Debug\UserInterface.exe.config
+D:\Programming\Github\TrafficOptimizer\UserInterface\bin\Debug\UserInterface.exe
+D:\Programming\Github\TrafficOptimizer\UserInterface\bin\Debug\UserInterface.pdb
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface.csprojResolveAssemblyReference.cache
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\MainWindow.g.cs
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\App.g.cs
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface_MarkupCompile.cache
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface_MarkupCompile.lref
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\MainWindow.baml
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface.g.resources
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface.Properties.Resources.resources
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface.csproj.GenerateResource.Cache
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface.exe
+D:\Programming\Github\TrafficOptimizer\UserInterface\obj\Debug\UserInterface.pdb
