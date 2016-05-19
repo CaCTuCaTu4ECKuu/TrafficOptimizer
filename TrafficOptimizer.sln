@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visual_Beta", "Visual_Beta\Visual_Beta.csproj", "{1E219873-7B2A-435B-907D-E2EEAF472268}"
+	ProjectSection(ProjectDependencies) = postProject
+		{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2} = {627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficOptimizer", "TrafficOptimizer\TrafficOptimizer.csproj", "{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrafficOptimizer.Test", "TrafficOptimizerTest\TrafficOptimizer.Test.csproj", "{4ECAE3FB-34D3-438E-8292-7B42FBA2B2FA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2} = {627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E219873-7B2A-435B-907D-E2EEAF472268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E219873-7B2A-435B-907D-E2EEAF472268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E219873-7B2A-435B-907D-E2EEAF472268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E219873-7B2A-435B-907D-E2EEAF472268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{627FDC0B-498A-4555-AA0D-5E1A4FF60AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ECAE3FB-34D3-438E-8292-7B42FBA2B2FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ECAE3FB-34D3-438E-8292-7B42FBA2B2FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ECAE3FB-34D3-438E-8292-7B42FBA2B2FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ECAE3FB-34D3-438E-8292-7B42FBA2B2FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
