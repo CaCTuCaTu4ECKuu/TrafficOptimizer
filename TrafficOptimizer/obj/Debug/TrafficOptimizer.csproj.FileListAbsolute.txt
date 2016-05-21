@@ -1,5 +1,0 @@
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizer\bin\Debug\TrafficOptimizer.dll
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizer\bin\Debug\TrafficOptimizer.pdb
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizer\obj\Debug\TrafficOptimizer.csprojResolveAssemblyReference.cache
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizer\obj\Debug\TrafficOptimizer.dll
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizer\obj\Debug\TrafficOptimizer.pdb

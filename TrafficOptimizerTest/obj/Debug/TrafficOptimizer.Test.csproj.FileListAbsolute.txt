@@ -1,7 +1,0 @@
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\bin\Debug\TrafficOptimizerTest.dll
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\bin\Debug\TrafficOptimizerTest.pdb
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\bin\Debug\TrafficOptimizer.dll
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\bin\Debug\TrafficOptimizer.pdb
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\obj\Debug\TrafficOptimizer.Test.csprojResolveAssemblyReference.cache
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\obj\Debug\TrafficOptimizerTest.dll
-D:\Programming\Programs\Диплом\Visual_Beta\TrafficOptimizerTest\obj\Debug\TrafficOptimizerTest.pdb

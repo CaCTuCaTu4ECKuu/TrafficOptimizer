@@ -6,7 +6,19 @@
         xmlns:local="clr-namespace:UserInterface"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+    <Grid x:Name="Background">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid x:Name="Tray" Grid.Row="0" MinHeight="25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="Button1" Grid.Column="0" Content="Button" Width="75"/>
+            <Button x:Name="Button2" Grid.Column="1" Content="Button" Width="75"/>
+        </Grid>
+        <Grid x:Name="Content" Grid.Row="1" MinHeight="300"/>
     </Grid>
 </Window>

@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -24,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -41,17 +41,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\Logic\PathBuilder\PathBuilder.cs" />
-    <Compile Include="Base\Model\Direction.cs" />
-    <Compile Include="Base\Model\Edge.cs" />
-    <Compile Include="Base\Logic\Graph.cs" />
-    <Compile Include="Base\Model\Node.cs" />
-    <Compile Include="Base\Model\Path.cs" />
+    <Compile Include="Graph\PathBuilder.cs" />
+    <Compile Include="Graph\Model\Direction.cs" />
+    <Compile Include="Graph\Model\Edge.cs" />
+    <Compile Include="Graph\Graph.cs" />
+    <Compile Include="Graph\Model\Node.cs" />
+    <Compile Include="Graph\Model\Path.cs" />
+    <Compile Include="RoadMap\Model\Streak.cs" />
+    <Compile Include="RoadMap\Model\VehicleContainer.cs" />
+    <Compile Include="RoadMap\Intersection.cs" />
+    <Compile Include="RoadMap\Model\Line.cs" />
+    <Compile Include="RoadMap\Road.cs" />
+    <Compile Include="RoadMap\Section.cs" />
+    <Compile Include="RoadMap\RoadMap.cs" />
+    <Compile Include="RoadMap\TrafficLight.cs" />
+    <Compile Include="RoadMap\Model\Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\Calculator.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tools\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
