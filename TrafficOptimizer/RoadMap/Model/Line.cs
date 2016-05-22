@@ -7,12 +7,21 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
+    using Graph.Model;
+
     public class Line
     {
-        public double Length
+        public Edge Edge
         {
             get;
-            set;
+            private set;
+        }
+        public double Length
+        {
+            get
+            {
+                return Edge.Weight;
+            }
         }
         private List<Streak> _streaks = new List<Streak>();
         public int Streaks
@@ -68,9 +77,9 @@ namespace TrafficOptimizer.RoadMap.Model
             return _streaks[streak].InputSpace;
         }
 
-        public Line(double length, int streaks)
+        public Line(Edge edge, int streaks)
         {
-            Length = length;
+            Edge = edge;
             Streaks = streaks;
         }
     }

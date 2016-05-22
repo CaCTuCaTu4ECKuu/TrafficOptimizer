@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap
 {
+    using Model;
     using Graph;
     using Graph.Model;
 
@@ -19,30 +20,37 @@ namespace TrafficOptimizer.RoadMap
             private set;
         }
 
-        public Edge PrimaryEdge
+        public Line PrimaryLine
         {
             get;
             private set;
         }
-        public Edge SlaveEdge
+        public Line SlaveLine
         {
             get;
             private set;
+        }
+        public int Streaks
+        {
+            get
+            {
+                return PrimaryLine.Streaks + SlaveLine.Streaks;
+            }
         }
 
         public double Length
         {
             get
             {
-                return PrimaryEdge.Weight;
+                return PrimaryLine.Length;
             }
         }
 
         public Road(Edge primary, Edge slave)
         {
             ID = _instances++;
-            PrimaryEdge = primary;
-            SlaveEdge = slave;
+            PrimaryLine = new Line(primary, 1);
+            SlaveLine = new Line(slave, 1);
         }
     }
 }

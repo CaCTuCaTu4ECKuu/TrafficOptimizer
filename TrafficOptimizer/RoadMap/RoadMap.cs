@@ -9,14 +9,17 @@ namespace TrafficOptimizer.RoadMap
 {
     using Graph;
     using Graph.Model;
+    using Model;
     using Tools;
 
     public class RoadMap
     {
-        private Dictionary<Point, Node> _nodes = new Dictionary<Point, Node>();
-        private Dictionary<Node, Point> _points = new Dictionary<Node, Point>();
-        private Dictionary<Node, Section> _sections = new Dictionary<Node, Section>();
-        private Dictionary<Edge, Road> _roads = new Dictionary<Edge, Road>();
+        protected Dictionary<Point, Node> _nodes = new Dictionary<Point, Node>();
+        protected Dictionary<Node, Point> _points = new Dictionary<Node, Point>();
+        protected Dictionary<Edge, Road> _roads = new Dictionary<Edge, Road>();
+        protected Dictionary<Point, Intersection> _intersections = new Dictionary<Point, Intersection>();
+        protected List<Vehicle> _vehicles_moving = new List<Vehicle>();
+        protected List<Vehicle> _vehicles_waiting = new List<Vehicle>();
 
         public Graph Graph
         {
@@ -88,10 +91,31 @@ namespace TrafficOptimizer.RoadMap
                 e.Weight = Calculator.Length(_points[e.Source], newPosition);
             }
         }
+        public void AddInterSection(Point position)
+        {
+            Intersection isec = new Intersection();
+            if (_nodes.ContainsKey(position))
+            {
+
+            }
+            else
+            {
+
+            }
+        }
 
         public RoadMap(Graph graph)
         {
             Graph = graph;
+        }
+        public RoadMap()
+        {
+            Graph = new Graph();
+        }
+
+        public void Step()
+        {
+
         }
     }
 }

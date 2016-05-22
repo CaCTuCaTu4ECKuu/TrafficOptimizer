@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         xmlns:local="clr-namespace:UserInterface"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid x:Name="Background">
+    <Grid x:Name="Bg_Wrap">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -15,10 +16,14 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="Button1" Grid.Column="0" Content="Button" Width="75"/>
-            <Button x:Name="Button2" Grid.Column="1" Content="Button" Width="75"/>
+            <Button x:Name="ZoomIn" Grid.Column="0" Content="+" Width="30" Margin="71,0" Click="ZoomIn_Click"/>
+            <Button x:Name="ZoomOut" Grid.Column="1" Content="-" Width="30" Margin="71,0" Click="ZoomOut_Click"/>
+            <Button x:Name="Button3" Grid.Column="2" Content="Button" Width="75"/>
         </Grid>
-        <Grid x:Name="Content" Grid.Row="1" MinHeight="300"/>
+        <Grid x:Name="GL_Content" Grid.Row="1" MinHeight="300">
+            <sharpGL:OpenGLControl x:Name="OpenGLWindow" OpenGLInitialized="OpenGLWindow_OpenGLInitialized" OpenGLDraw="OpenGLWindow_OpenGLDraw"/>
+        </Grid>
     </Grid>
 </Window>

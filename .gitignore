@@ -3,7 +3,6 @@ packages/
 *.DotSettings
 *.user
 _ReSharper.*/
-.vs/
 bin/
 obj/
 .nuget/

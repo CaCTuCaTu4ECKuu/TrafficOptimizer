@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap
 {
+    using Model;
+
     public class Intersection
     {
+        public List<Road> InRoads
+        {
+            get;
+            private set;
+        }
+        public List<Road> OutRoads
+        {
+            get;
+            private set;
+        }
     }
 }
