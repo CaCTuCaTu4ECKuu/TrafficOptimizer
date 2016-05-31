@@ -4,21 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrafficOptimizer.RoadMap
+namespace TrafficOptimizer.RoadMap.Model
 {
-    using Model;
-
-    public class Intersection
+    public class TrafficLight
     {
-        public List<Road> InRoads
+        public List<object> Colors
         {
             get;
             private set;
         }
-        public List<Road> OutRoads
+        public List<int> Intervals
         {
             get;
             private set;
+        }
+        public object Color
+        {
+            get;
         }
     }
 }

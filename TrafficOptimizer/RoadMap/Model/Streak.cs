@@ -1,8 +1,12 @@
 ﻿namespace TrafficOptimizer.RoadMap.Model
 {
-    public class Streak : VehicleContainer
+    public partial class Streak : VehicleContainer
     {
-        private Line _line;
+        public Line Line
+        {
+            get;
+            private set;
+        }
 
         public override bool IsOrdered
         {
@@ -38,10 +42,15 @@
                 if (Vehicles.Count > 0)
                     return Vehicles[0].PositionAt(this) > 0 ? Vehicles[0].PositionAt(this) : 0;
                 else
-                    return _line.Length;
+                    return Line.Length;
             }
         }
 
+        /// <summary>
+        /// Проверяет может ли машина поместится в указанной позиции
+        /// </summary>
+        /// <param name="vehicle">Машина</param>
+        /// <param name="position">Позици</param>
         public override bool CanFit(Vehicle vehicle, double position)
         {
             ThrowIfNotOrderedCorrectly();
@@ -86,11 +95,6 @@
                 }
             }
             return true;
-        }
-
-        public Streak(Line line) : base()
-        {
-            _line = line;
         }
     }
 }

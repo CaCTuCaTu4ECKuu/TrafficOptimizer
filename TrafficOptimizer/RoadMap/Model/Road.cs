@@ -5,13 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrafficOptimizer.RoadMap
+namespace TrafficOptimizer.RoadMap.Model
 {
-    using Model;
-    using Graph;
-    using Graph.Model;
-
-    public class Road
+    public partial class Road
     {
         private static uint _instances = 0;
         public uint ID
@@ -20,16 +16,31 @@ namespace TrafficOptimizer.RoadMap
             private set;
         }
 
+        public RoadMap RoadMap
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Полоса основного движения
+        /// </summary>
         public Line PrimaryLine
         {
             get;
             private set;
         }
+        /// <summary>
+        /// Полоса обратного движения
+        /// </summary>
         public Line SlaveLine
         {
             get;
             private set;
         }
+        /// <summary>
+        /// Общее количество полос движения
+        /// </summary>
         public int Streaks
         {
             get
@@ -38,19 +49,15 @@ namespace TrafficOptimizer.RoadMap
             }
         }
 
+        /// <summary>
+        /// Длинна отрезка
+        /// </summary>
         public double Length
         {
             get
             {
                 return PrimaryLine.Length;
             }
-        }
-
-        public Road(Edge primary, Edge slave)
-        {
-            ID = _instances++;
-            PrimaryLine = new Line(primary, 1);
-            SlaveLine = new Line(slave, 1);
         }
     }
 }

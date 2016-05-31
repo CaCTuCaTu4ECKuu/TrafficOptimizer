@@ -9,13 +9,24 @@ namespace TrafficOptimizer.RoadMap.Model
 {
     using Graph.Model;
 
-    public class Line
+    public partial class Line
     {
+        public Road Road
+        {
+            get;
+            private set;
+        }
         public Edge Edge
         {
             get;
             private set;
         }
+        public TrafficLight TrafficLight
+        {
+            get;
+            set;
+        }
+
         public double Length
         {
             get
@@ -23,30 +34,12 @@ namespace TrafficOptimizer.RoadMap.Model
                 return Edge.Weight;
             }
         }
-        private List<Streak> _streaks = new List<Streak>();
+        protected List<Streak> _streaks = new List<Streak>();
         public int Streaks
         {
             get
             {
                 return _streaks.Count;
-            }
-            set
-            {
-                if (value < _streaks.Count)
-                {
-                    for (int i = _streaks.Count - 1; i >= value; i--)
-                    {
-                        _streaks.RemoveAt(i);
-                    }
-                }
-                else
-                {
-                    int i = value - _streaks.Count;
-                    while (i-- > 0)
-                    {
-                        _streaks.Insert(_streaks.Count, new Streak(this));
-                    }
-                }
             }
         }
 
@@ -75,12 +68,6 @@ namespace TrafficOptimizer.RoadMap.Model
         public double InputSpaceAt(int streak)
         {
             return _streaks[streak].InputSpace;
-        }
-
-        public Line(Edge edge, int streaks)
-        {
-            Edge = edge;
-            Streaks = streaks;
         }
     }
 }

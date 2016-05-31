@@ -10,16 +10,16 @@ namespace TrafficOptimizer.RoadMap
     using Graph;
     using Graph.Model;
     using Model;
+    using Map;
     using Tools;
 
-    public class RoadMap
+    public partial class RoadMap
     {
-        protected Dictionary<Point, Node> _nodes = new Dictionary<Point, Node>();
-        protected Dictionary<Node, Point> _points = new Dictionary<Node, Point>();
-        protected Dictionary<Edge, Road> _roads = new Dictionary<Edge, Road>();
-        protected Dictionary<Point, Intersection> _intersections = new Dictionary<Point, Intersection>();
-        protected List<Vehicle> _vehicles_moving = new List<Vehicle>();
-        protected List<Vehicle> _vehicles_waiting = new List<Vehicle>();
+        protected Dictionary<PointF, Node> _nodes = new Dictionary<PointF, Node>();
+        protected Dictionary<Node, PointF> _points = new Dictionary<Node, PointF>();
+
+        protected Dictionary<Node, Section> _sections = new Dictionary<Node, Section>();
+        protected Dictionary<Direction, Road> _roads = new Dictionary<Direction, Road>();
 
         public Graph Graph
         {
@@ -27,73 +27,72 @@ namespace TrafficOptimizer.RoadMap
             private set;
         }
 
-        public Direction GetDirection(Point p1, Point p2)
+        public Direction GetDirection(PointF p1, PointF p2)
         {
-            return new Direction(_nodes[p1], _nodes[p2]);
+            if (_nodes.ContainsKey(p1) && _nodes.ContainsKey(p2))
+                return new Direction(_nodes[p1], _nodes[p2]);
+            return null;
         }
-        private Node[] GetOrCreate(Point p1, Point p2)
+        protected Road GetRoad(Direction dir)
         {
-            Node[] res = new Node[2];
-            if (_nodes.ContainsKey(p1))
-                res[0] = _nodes[p1];
+            if (dir != null)
+            {
+                if (_roads.ContainsKey(dir))
+                    return _roads[dir];
+                else if (_roads.ContainsKey(dir = new Direction(dir.Destination, dir.Source)))
+                    return _roads[dir];
+            }
+            return null;
+
+        }
+
+        /// <summary>
+        /// Добавление новой дороги или полосы на карту 
+        /// </summary>
+        /// <param name="start">Начальная точка</param>
+        /// <param name="end">Конечная точка</param>
+        public void AddRoad(PointF start, PointF end)
+        {
+            Road road = null;
+            if ((road = GetRoad(GetDirection(start, end))) != null)
+            {
+                if (road.PrimaryLine.Edge.Source == _nodes[start])
+                {
+                    // Мы добавляем основную дорогу
+                    road.PrimaryLine.ChangeStreaks(road.PrimaryLine.Streaks + 1);
+                }
+                else
+                {
+                    // Мы добавляем встречную
+                    road.SlaveLine.ChangeStreaks(road.SlaveLine.Streaks + 1);
+                }
+                throw new NotImplementedException("Добавть дорогу");
+            }
             else
             {
-                res[0] = Graph.MakeNode();
-                _nodes.Add(p1, res[0]);
-                _points.Add(res[0], p1);
+                // Добавляем новую дорогу
+                float weight = Tools.Distance(start, end);
+                // Обозначаем граф
+                Node n1 = Graph.MakeNode();
+                Node n2 = Graph.MakeNode();
+                Edge pe = Graph.Unite(n1, n2, weight);
+                Edge se = Graph.Unite(n2, n1, weight);
+
+                // Добавляем расположение
+                Road[] r = new Road[1];
+                r[0] = new Road(this, pe, se, start, end);
+
+                Section sec_start = new EndPoint(null, r);
+                Section sec_end = new EndPoint(r, null);
             }
+        }
+        public void ChangePosition(PointF oldPosition, PointF newPosition)
+        {
             
-            if (_nodes.ContainsKey(p2))
-                res[1] = _nodes[p2];
-            else
-            {
-                res[1] = Graph.MakeNode();
-                _nodes.Add(p2, res[1]);
-                _points.Add(res[1], p2);
-            }
-            return res;
-        }
-        public void AddRoad(Point start, Point end)
-        {
-            Node[] nodes = GetOrCreate(start, end);
-            Direction dir = new Direction(nodes[0], nodes[1]);
-            Edge e1;
-            if ((e1 = Graph.GetEdge(dir)) != null)
-            {
-
-            }
-            else
-            {
-                var weight = Calculator.Length(start, end);
-                e1 = Graph.Unite(nodes[0], nodes[1], weight);
-                Edge e2 = Graph.Unite(nodes[1], nodes[0], weight);
-                Road r = new Road(e1, e2);
-
-                dir = GetDirection(start, end);
-                _roads.Add(e1, r);
-                _roads.Add(e2, r);
-            }
-        }
-        public void ChangePosition(Point oldPosition, Point newPosition)
-        {
-            var node = _nodes[oldPosition];
-            _nodes.Remove(oldPosition);
-
-            _nodes.Add(newPosition, node);
-            _points[node] = newPosition;
-
-            foreach (var e in node.RelatedEdges.Values)
-            {
-                e.Weight = Calculator.Length(newPosition, _points[e.Destination]);
-            }
-            foreach (var e in Graph.GetRelatedTo(node))
-            {
-                e.Weight = Calculator.Length(_points[e.Source], newPosition);
-            }
         }
         public void AddInterSection(Point position)
         {
-            Intersection isec = new Intersection();
+            Intersection isec = new Intersection(null, null);
             if (_nodes.ContainsKey(position))
             {
 
@@ -104,13 +103,25 @@ namespace TrafficOptimizer.RoadMap
             }
         }
 
-        public RoadMap(Graph graph)
+        private void setRoadMap(Graph graph, RoadMapParameters parameters)
         {
-            Graph = graph;
+            if (graph != null)
+                Graph = graph;
+            else
+                Graph = new Graph();
+
+            if (parameters != null)
+                RoadMapParametrs = parameters;
+            else
+                RoadMapParametrs = new RoadMapParameters();
+        }
+        public RoadMap(Graph graph, RoadMapParameters parameters)
+        {
+            setRoadMap(graph, parameters);
         }
         public RoadMap()
         {
-            Graph = new Graph();
+            setRoadMap(null, null);
         }
 
         public void Step()

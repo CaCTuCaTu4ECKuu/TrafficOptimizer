@@ -14,6 +14,25 @@ namespace TrafficOptimizer.Test.GraphTest
         private List<Node> nodes;
         private List<Edge> edges;
 
+        public PathBuilderTest()
+        {
+            // Строим граф, на котором будем тестировать
+            nodes = new List<Node>();
+            edges = new List<Edge>();
+
+            g = new Graph();
+            nodes.Add(g.MakeNode());
+            nodes.Add(g.MakeNode());
+            nodes.Add(g.MakeNode());
+            nodes.Add(g.MakeNode());
+            edges.Add(g.Unite(nodes[0], nodes[1], 25));
+            edges.Add(g.Unite(nodes[0], nodes[2], 10));
+            edges.Add(g.Unite(nodes[0], nodes[3], 50));
+            edges.Add(g.Unite(nodes[1], nodes[3], 5));
+            edges.Add(g.Unite(nodes[2], nodes[3], 42));
+            edges.Add(g.Unite(nodes[2], nodes[1], 6));
+        }
+
         /// <summary>
         /// Проверяет работу алгоритма
         /// </summary>
@@ -26,6 +45,7 @@ namespace TrafficOptimizer.Test.GraphTest
         [TestMethod]
         public void PathIsCorrectTest1_2()
         {
+            // Запрещаем использовать одну из граней
             List<Edge> restricked = new List<Edge>();
             restricked.Add(edges[5]);
             var res = g.FindPath(nodes[0], nodes[3], restricked);
@@ -34,6 +54,7 @@ namespace TrafficOptimizer.Test.GraphTest
         [TestMethod]
         public void PathIsCorrectTest1_3()
         {
+            // Указываем список узлов, которые можно использовать
             List<Node> scope = new List<Node>();
             scope.Add(nodes[0]);
             scope.Add(nodes[2]);
@@ -44,6 +65,7 @@ namespace TrafficOptimizer.Test.GraphTest
         [TestMethod]
         public void PathIsCorrectTest1_4()
         {
+            // Указываем список узлов, которые можно использовать и запрещаем использовать одну из граней
             List<Node> scope = new List<Node>();
             scope.Add(nodes[0]);
             scope.Add(nodes[2]);
@@ -52,24 +74,6 @@ namespace TrafficOptimizer.Test.GraphTest
             restricked.Add(edges[2]);
             var res = g.FindPath(scope, nodes[0], nodes[3], restricked);
             Assert.AreEqual(52D, res.Weight);
-        }
-
-        public PathBuilderTest()
-        {
-            nodes = new List<Node>();
-            edges = new List<Edge>();
-
-            g = new Graph();
-            nodes.Add(g.MakeNode());
-            nodes.Add(g.MakeNode());
-            nodes.Add(g.MakeNode());
-            nodes.Add(g.MakeNode());
-            edges.Add(g.Unite(nodes[0], nodes[1], 25)); 
-            edges.Add(g.Unite(nodes[0], nodes[2], 10));
-            edges.Add(g.Unite(nodes[0], nodes[3], 50));
-            edges.Add(g.Unite(nodes[1], nodes[3], 5));
-            edges.Add(g.Unite(nodes[2], nodes[3], 42));
-            edges.Add(g.Unite(nodes[2], nodes[1], 6));
         }
     }
 }
