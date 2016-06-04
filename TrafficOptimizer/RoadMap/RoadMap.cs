@@ -59,19 +59,21 @@ namespace TrafficOptimizer.RoadMap
                 if (road.PrimaryLine.Edge.Source == _nodes[start])
                 {
                     // Мы добавляем основную дорогу
-                    road.PrimaryLine.ChangeStreaks(road.PrimaryLine.Streaks + 1);
+                    road.PrimaryLine.ChangeStreaks(road.PrimaryLine.Streaks.Count + 1);
                 }
                 else
                 {
                     // Мы добавляем встречную
-                    road.SlaveLine.ChangeStreaks(road.SlaveLine.Streaks + 1);
+                    road.SlaveLine.ChangeStreaks(road.SlaveLine.Streaks.Count + 1);
                 }
-                throw new NotImplementedException("Добавть дорогу");
             }
             else
             {
+                // Если это начало или конец существующей дороги
+
                 // Добавляем новую дорогу
                 float weight = Tools.Distance(start, end);
+
                 // Обозначаем граф
                 Node n1 = Graph.MakeNode();
                 Node n2 = Graph.MakeNode();
@@ -84,6 +86,22 @@ namespace TrafficOptimizer.RoadMap
 
                 Section sec_start = new EndPoint(null, r);
                 Section sec_end = new EndPoint(r, null);
+
+                if (!_nodes.ContainsKey(start))
+                    _nodes.Add(start, n1);
+                if (!_nodes.ContainsKey(end))
+                    _nodes.Add(end, n2);
+                if (!_points.ContainsKey(n1))
+                    _points.Add(n1, start);
+                if (!_points.ContainsKey(n2))
+                    _points.Add(n2, end);
+
+                if (!_sections.ContainsKey(n1))
+                    _sections.Add(n1, sec_start);
+                if (!_sections.ContainsKey(n2))
+                    _sections.Add(n2, sec_end);
+
+                _roads.Add(new Direction(n1, n2), r[0]);
             }
         }
         public void ChangePosition(PointF oldPosition, PointF newPosition)

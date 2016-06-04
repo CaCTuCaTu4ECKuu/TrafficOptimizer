@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
     using Tools;
 
+    [DebuggerDisplay("{MiddleStart} - {MiddleEnd}")]
     public partial class Streak
     {
         public RoadMapParameters Parameters
@@ -92,11 +94,11 @@ namespace TrafficOptimizer.RoadMap.Model
             MiddleEnd = newEnd;
 
             // Right Border
-            BorderRightStart = Tools.HeightPoint(Parameters.StreakHalf, true, MiddleStart, MiddleEnd);
-            BorderRightEnd = Tools.HeightPoint(Parameters.StreakHalf, false, MiddleStart, MiddleEnd);
+            BorderLeftStart = Tools.HeightPoint(Parameters.StreakHalf, true, MiddleStart, MiddleEnd);
+            BorderLeftEnd = Tools.HeightPoint(Parameters.StreakHalf, false, MiddleEnd, MiddleStart);
             // Left Border
-            BorderLeftStart = Tools.HeightPoint(Parameters.StreakHalf, false, MiddleStart, MiddleEnd);
-            BorderLeftEnd = Tools.HeightPoint(Parameters.StreakHalf, true, MiddleStart, MiddleEnd);
+            BorderRightStart = Tools.HeightPoint(Parameters.StreakHalf, false, MiddleStart, MiddleEnd);
+            BorderRightEnd = Tools.HeightPoint(Parameters.StreakHalf, true, MiddleEnd, MiddleStart);
         }
     }
 

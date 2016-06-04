@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
     using Graph.Model;
     using TrafficOptimizer.RoadMap;
 
+    [DebuggerDisplay("[{PrimaryLine.Edge.Source.ID}]-[{PrimaryLine.Edge.Destination.ID}] {StartPoint} - {EndPoint}")]
     public partial class Road
     {
         /// <summary>

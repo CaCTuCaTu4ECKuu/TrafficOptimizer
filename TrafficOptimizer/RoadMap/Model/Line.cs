@@ -34,30 +34,27 @@ namespace TrafficOptimizer.RoadMap.Model
                 return Edge.Weight;
             }
         }
-        protected List<Streak> _streaks = new List<Streak>();
-        public int Streaks
+        public List<Streak> Streaks
         {
-            get
-            {
-                return _streaks.Count;
-            }
+            get;
+            private set;
         }
 
         public bool CanFit(Vehicle vehicle, int streak, double position)
         {
-            return _streaks[streak].CanFit(vehicle, position);
+            return Streaks[streak].CanFit(vehicle, position);
         }
         public void SetVehicle(Vehicle vehicle, int streak, double position)
         {
             if (CanFit(vehicle, streak, position))
-                _streaks[streak].SetVehicle(vehicle, position);
+                Streaks[streak].SetVehicle(vehicle, position);
         } 
 
         public bool IsOrderedCorrectly
         {
             get
             {
-                foreach (var s in _streaks)
+                foreach (var s in Streaks)
                 {
                     if (!s.IsOrderedCorrectly)
                         return false;
@@ -67,7 +64,7 @@ namespace TrafficOptimizer.RoadMap.Model
         }
         public double InputSpaceAt(int streak)
         {
-            return _streaks[streak].InputSpace;
+            return Streaks[streak].InputSpace;
         }
     }
 }

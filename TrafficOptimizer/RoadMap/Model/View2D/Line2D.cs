@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
     using Graph.Model;
     using Tools;
 
+    [DebuggerDisplay("[{Edge.Source.ID}]-[{Edge.Destination.ID}] {LineLeftStart} - {LineLeftEnd}")]
     public partial class Line
     {
         public RoadMapParameters Parameters
@@ -43,9 +45,9 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get
             {
-                if (Streaks > 0)
+                if (Streaks.Count > 0)
                 {
-                    return (_streaks[_streaks.Count - 1]).BorderRightStart;
+                    return (Streaks[Streaks.Count - 1]).BorderRightStart;
                 }
                 return LineLeftStart;
             }
@@ -57,9 +59,9 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get
             {
-                if (Streaks > 0)
+                if (Streaks.Count > 0)
                 {
-                    return (_streaks[_streaks.Count - 1]).BorderRightEnd;
+                    return (Streaks[Streaks.Count - 1]).BorderRightEnd;
                 }
                 return LineLeftEnd;
             }
@@ -75,6 +77,8 @@ namespace TrafficOptimizer.RoadMap.Model
         /// <param name="dst">Конец центра дороги</param>
         public Line(Road road, Edge edge, int streaks, PointF src, PointF dst)
         {
+            Streaks = new List<Streak>();
+
             Road = road;
             Edge = edge;
 
@@ -92,41 +96,41 @@ namespace TrafficOptimizer.RoadMap.Model
             LineLeftStart = newStart;
             LineLeftEnd = newEnd;
 
-            if (Streaks > 0)
+            if (Streaks.Count > 0)
             {
                 PointF oldStart = newStart;
-                PointF stStart = Tools.HeightPoint(Parameters.StreakHalf, true, newStart, newEnd);
-                PointF stEnd = Tools.HeightPoint(Parameters.StreakHalf, false, newEnd, oldStart);
-                (_streaks[0]).Move(stStart, stEnd);
+                PointF stStart = Tools.HeightPoint(Parameters.StreakHalf, false, newStart, newEnd);
+                PointF stEnd = Tools.HeightPoint(Parameters.StreakHalf, true, newEnd, oldStart);
+                Streaks[0].Move(stStart, stEnd);
 
-                for (int i = 1; i < _streaks.Count; i++)
+                for (int i = 1; i < Streaks.Count; i++)
                 {
                     oldStart = stStart;
-                    stStart = Tools.HeightPoint(Parameters.StreakHalf, true, stStart, stEnd);
-                    stEnd = Tools.HeightPoint(Parameters.StreakHalf, false, stEnd, oldStart);
+                    stStart = Tools.HeightPoint(Parameters.StreakSize, false, stStart, stEnd);
+                    stEnd = Tools.HeightPoint(Parameters.StreakSize, true, stEnd, oldStart);
 
-                    (_streaks[i]).Move(stStart, stEnd);
+                    Streaks[i].Move(stStart, stEnd);
                 }
             }
         }
         public void ChangeStreaks(int newCount)
         {
-            if (newCount != Streaks)
+            if (newCount != Streaks.Count)
             {
-                if (newCount < _streaks.Count)
+                if (newCount < Streaks.Count)
                 {
-                    for (int i = _streaks.Count - 1; i >= newCount; i--)
+                    for (int i = Streaks.Count - 1; i >= newCount; i--)
                     {
-                        _streaks.RemoveAt(i);
+                        Streaks.RemoveAt(i);
                     }
                 }
                 else
                 {
                     // Добавляем полосы
-                    int i = newCount - _streaks.Count;
+                    int i = newCount - Streaks.Count;
                     while (i-- > 0)
                     {
-                        _streaks.Insert(_streaks.Count, new Streak(this, new PointF(), new PointF()));
+                        Streaks.Insert(Streaks.Count, new Streak(this, new PointF(), new PointF()));
                     }
                 }
                 // Обновляем положение всех полос (плевать, это нечасто)

@@ -45,7 +45,7 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get
             {
-                return PrimaryLine.Streaks + SlaveLine.Streaks;
+                return PrimaryLine.Streaks.Count + SlaveLine.Streaks.Count;
             }
         }
 
