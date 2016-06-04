@@ -17,17 +17,20 @@ using SharpGL.WPF;
 
 namespace UserInterface
 {
+    using Visualize;
+
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Gl_RoadMap roadMap;
 
         public MainWindow()
         {
             InitializeComponent();
-            
 
+            roadMap = new Gl_RoadMap(OpenGLWindow.OpenGL);
         }
 
         private void OpenGLWindow_OpenGLInitialized(object sender, SharpGL.SceneGraph.OpenGLEventArgs args)
@@ -39,19 +42,19 @@ namespace UserInterface
         {
             ((OpenGLControl)sender).OpenGL.Clear(OpenGL.GL_COLOR_BUFFER_BIT | OpenGL.GL_DEPTH_BUFFER_BIT);
 
-
+            roadMap.Draw();
 
             ((OpenGLControl)sender).OpenGL.Flush();
         }
 
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-
+            roadMap.RoadMapParametrs.ViewDistance += 5f;
         }
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-
+            roadMap.RoadMapParametrs.ViewDistance -= 5f;
         }
     }
 }

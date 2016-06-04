@@ -6,7 +6,8 @@
         xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF"
         xmlns:local="clr-namespace:UserInterface"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        MinWidth="640" MinHeight="480"
+        Title="MainWindow">
     <Grid x:Name="Bg_Wrap">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -23,7 +24,12 @@
             <Button x:Name="Button3" Grid.Column="2" Content="Button" Width="75"/>
         </Grid>
         <Grid x:Name="GL_Content" Grid.Row="1" MinHeight="300">
-            <sharpGL:OpenGLControl x:Name="OpenGLWindow" OpenGLInitialized="OpenGLWindow_OpenGLInitialized" OpenGLDraw="OpenGLWindow_OpenGLDraw"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid Width="250" Height="auto"/>
+            <sharpGL:OpenGLControl x:Name="OpenGLWindow" Grid.Column="1" OpenGLInitialized="OpenGLWindow_OpenGLInitialized" OpenGLDraw="OpenGLWindow_OpenGLDraw" MinHeight="300"/>
         </Grid>
     </Grid>
 </Window>
