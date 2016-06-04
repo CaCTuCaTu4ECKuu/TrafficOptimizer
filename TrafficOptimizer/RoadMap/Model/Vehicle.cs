@@ -11,28 +11,28 @@ namespace TrafficOptimizer.RoadMap.Model
             private set;
         }
 
-        public double Length
+        public float Length
         {
             get;
             private set;
         }
-        public double Width
+        public float Width
         {
             get;
             private set;
         }
-        public double Height
+        public float Height
         {
             get;
             private set;
         }
 
-        private static Dictionary<VehicleContainer, double> _positons = new Dictionary<VehicleContainer, double>();
-        public double PositionAt(VehicleContainer container)
+        private static Dictionary<VehicleContainer, float> _positons = new Dictionary<VehicleContainer, float>();
+        public float PositionAt(VehicleContainer container)
         {
             return _positons[container];
         }
-        public void Enter(VehicleContainer container, double position)
+        public void Enter(VehicleContainer container, float position)
         {
             _positons.Add(container, position);
         }
@@ -41,18 +41,18 @@ namespace TrafficOptimizer.RoadMap.Model
             _positons.Remove(container);
         }
 
-        public double Speed
+        public float Speed
         {
             get;
             set;
         }
-        public double Acceleration
+        public float Acceleration
         {
             get;
             set;
         }
 
-        public Vehicle(double length, double width, double height)
+        public Vehicle(float length, float width, float height)
         {
             ID = _instances++;
 

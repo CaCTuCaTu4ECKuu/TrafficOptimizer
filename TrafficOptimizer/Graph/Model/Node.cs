@@ -34,17 +34,17 @@ namespace TrafficOptimizer.Graph.Model
         }
 
         /// <summary>
-        /// Вес ребра от этого узла до указанного. (double.MaxValue если такого ребра нет)
+        /// Вес ребра от этого узла до указанного. (float.MaxValue если такого ребра нет)
         /// </summary>
         /// <param name="dst">Узел назначения</param>
         /// <returns>Вес ребра</returns>
-        public double WeightTo(Node dst)
+        public float WeightTo(Node dst)
         {
             if (_relatedEdges.ContainsKey(dst))
             {
                 return _relatedEdges[dst].Weight;
             }
-            return double.MaxValue;
+            return float.MaxValue;
         }
         /// <summary>
         /// Проверяет, существует ли ребра, исходящие от этого узла к заданному
@@ -61,7 +61,7 @@ namespace TrafficOptimizer.Graph.Model
         /// <param name="dst">Узел назначения</param>
         /// <param name="weight">Вес грани к заданному узлу</param>
         /// <returns>Добавленная грань</returns>
-        public Edge SetEdge(Node dst, double weight)
+        public Edge SetEdge(Node dst, float weight)
         {
             if (!_relatedEdges.ContainsKey(dst))
             {

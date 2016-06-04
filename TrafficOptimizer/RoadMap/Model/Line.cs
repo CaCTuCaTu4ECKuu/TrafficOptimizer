@@ -27,7 +27,7 @@ namespace TrafficOptimizer.RoadMap.Model
             set;
         }
 
-        public double Length
+        public float Length
         {
             get
             {
@@ -40,11 +40,11 @@ namespace TrafficOptimizer.RoadMap.Model
             private set;
         }
 
-        public bool CanFit(Vehicle vehicle, int streak, double position)
+        public bool CanFit(Vehicle vehicle, int streak, float position)
         {
             return Streaks[streak].CanFit(vehicle, position);
         }
-        public void SetVehicle(Vehicle vehicle, int streak, double position)
+        public void SetVehicle(Vehicle vehicle, int streak, float position)
         {
             if (CanFit(vehicle, streak, position))
                 Streaks[streak].SetVehicle(vehicle, position);
@@ -62,7 +62,7 @@ namespace TrafficOptimizer.RoadMap.Model
                 return true;
             }
         }
-        public double InputSpaceAt(int streak)
+        public float InputSpaceAt(int streak)
         {
             return Streaks[streak].InputSpace;
         }

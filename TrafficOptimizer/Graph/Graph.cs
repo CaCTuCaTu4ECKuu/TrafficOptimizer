@@ -68,7 +68,7 @@ namespace TrafficOptimizer.Graph
                 }
             }
         }
-        public Edge Unite(Node src, Node dst, double weight)
+        public Edge Unite(Node src, Node dst, float weight)
         {
             if (_nodes.Contains(src) && _nodes.Contains(dst))
             {

@@ -67,13 +67,13 @@ namespace TrafficOptimizer.Graph.Model
                 return res;
             }
         }
-        public double Weight
+        public float Weight
         {
             get
             {
                 ThrowIfNotSolid();
 
-                double weight = 0;
+                float weight = 0;
                 for (int i = 0; i < Nodes.Count - 1; i++)
                 {
                     weight += Nodes[i].WeightTo(Nodes[i + 1]);

@@ -52,7 +52,7 @@ namespace TrafficOptimizer.RoadMap.Model
         /// <summary>
         /// Длинна отрезка
         /// </summary>
-        public double Length
+        public float Length
         {
             get
             {

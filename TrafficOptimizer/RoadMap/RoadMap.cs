@@ -53,8 +53,8 @@ namespace TrafficOptimizer.RoadMap
         /// <param name="end">Конечная точка</param>
         public void AddRoad(PointF start, PointF end)
         {
-            Road road = null;
-            if ((road = GetRoad(GetDirection(start, end))) != null)
+            Road road = GetRoad(GetDirection(start, end));
+            if (road != null)
             {
                 if (road.PrimaryLine.Edge.Source == _nodes[start])
                 {
@@ -69,23 +69,21 @@ namespace TrafficOptimizer.RoadMap
             }
             else
             {
+                float weight = Tools.Distance(start, end);
+                Node n1 = _nodes[start] ?? Graph.MakeNode();
+                Node n2 = _nodes[end] ?? Graph.MakeNode();
+                Road[] r = new Road[1];
+
                 // Если это начало или конец существующей дороги
 
                 // Добавляем новую дорогу
-                float weight = Tools.Distance(start, end);
 
                 // Обозначаем граф
-                Node n1 = Graph.MakeNode();
-                Node n2 = Graph.MakeNode();
-                Edge pe = Graph.Unite(n1, n2, weight);
-                Edge se = Graph.Unite(n2, n1, weight);
+                Edge prim_e = Graph.Unite(n1, n2, weight);
+                Edge slave_e = Graph.Unite(n2, n1, weight);
 
                 // Добавляем расположение
-                Road[] r = new Road[1];
-                r[0] = new Road(this, pe, se, start, end);
-
-                Section sec_start = new EndPoint(null, r);
-                Section sec_end = new EndPoint(r, null);
+                r[0] = new Road(this, prim_e, slave_e, start, end);
 
                 if (!_nodes.ContainsKey(start))
                     _nodes.Add(start, n1);
@@ -97,9 +95,21 @@ namespace TrafficOptimizer.RoadMap
                     _points.Add(n2, end);
 
                 if (!_sections.ContainsKey(n1))
-                    _sections.Add(n1, sec_start);
+                {
+                    _sections.Add(n1, new EndPoint(null, r));
+                }
+                else
+                {
+                   _sections[n1].OutRoads.Add(r[0]);
+                }
                 if (!_sections.ContainsKey(n2))
-                    _sections.Add(n2, sec_end);
+                {
+                    _sections.Add(n2, new EndPoint(r, null));
+                }
+                else
+                {
+                    _sections[n2].InRoads.Add(r[0]);
+                }
 
                 _roads.Add(new Direction(n1, n2), r[0]);
             }

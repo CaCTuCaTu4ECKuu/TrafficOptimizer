@@ -45,7 +45,7 @@ namespace TrafficOptimizer.Graph.Model
         /// <summary>
         /// Вес ребра
         /// </summary>
-        public double Weight
+        public float Weight
         {
             get;
             set;
@@ -57,7 +57,7 @@ namespace TrafficOptimizer.Graph.Model
         /// <param name="src">Узел, из которого выходит ребро</param>
         /// <param name="dst">Узел, к которому ведет ребро</param>э
         /// <param name="dst">Вес ребра</param>
-        public Edge(Node src, Node dst, double weight)
+        public Edge(Node src, Node dst, float weight)
         {
             Direction = new Direction(src, dst);
             Weight = weight;

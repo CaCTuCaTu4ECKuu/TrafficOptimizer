@@ -24,7 +24,7 @@ namespace TrafficOptimizer.Graph
             while(true)
             {
                 Node recent = null;
-                double best = double.MaxValue;
+                float best = float.MaxValue;
                 foreach (var n in notVisited)
                 {
                     if (track.ContainsKey(n) && track[n].Price < best)
@@ -71,9 +71,9 @@ namespace TrafficOptimizer.Graph
         }
         private class SearchData
         {
-            public double Price { get; set; }
+            public float Price { get; set; }
             public Node Previvous { get; set; }
-            public SearchData(Node prev, double price)
+            public SearchData(Node prev, float price)
             {
                 Price = price;
                 Previvous = prev;

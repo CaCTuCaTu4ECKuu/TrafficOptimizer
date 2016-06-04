@@ -21,7 +21,7 @@ namespace TrafficOptimizer.RoadMap.Model
         /// Вставляет машину (без проверки на корректность)
         /// </summary>
         /// <param name="vehicle">Машина</param>
-        public void SetVehicle(Vehicle vehicle, double position)
+        public void SetVehicle(Vehicle vehicle, float position)
         {
             int i = Vehicles.Count;
             while (Vehicles[i - 1].PositionAt(this) > position)
@@ -36,7 +36,7 @@ namespace TrafficOptimizer.RoadMap.Model
             vehicle.Leave(this);
         }
 
-        public abstract bool CanFit(Vehicle vehicle, double position);
+        public abstract bool CanFit(Vehicle vehicle, float position);
         public abstract bool IsOrdered
         {
             get;
@@ -45,7 +45,7 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get;
         }
-        public abstract double InputSpace
+        public abstract float InputSpace
         {
             get;
         }

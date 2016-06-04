@@ -33,7 +33,7 @@
                 return true;
             }
         }
-        public override double InputSpace
+        public override float InputSpace
         {
             get
             {
@@ -51,7 +51,7 @@
         /// </summary>
         /// <param name="vehicle">Машина</param>
         /// <param name="position">Позици</param>
-        public override bool CanFit(Vehicle vehicle, double position)
+        public override bool CanFit(Vehicle vehicle, float position)
         {
             ThrowIfNotOrderedCorrectly();
 
