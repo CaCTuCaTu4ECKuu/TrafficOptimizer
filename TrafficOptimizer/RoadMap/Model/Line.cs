@@ -39,32 +39,5 @@ namespace TrafficOptimizer.RoadMap.Model
             get;
             private set;
         }
-
-        public bool CanFit(Vehicle vehicle, int streak, float position)
-        {
-            return Streaks[streak].CanFit(vehicle, position);
-        }
-        public void SetVehicle(Vehicle vehicle, int streak, float position)
-        {
-            if (CanFit(vehicle, streak, position))
-                Streaks[streak].SetVehicle(vehicle, position);
-        } 
-
-        public bool IsOrderedCorrectly
-        {
-            get
-            {
-                foreach (var s in Streaks)
-                {
-                    if (!s.IsOrderedCorrectly)
-                        return false;
-                }
-                return true;
-            }
-        }
-        public float InputSpaceAt(int streak)
-        {
-            return Streaks[streak].InputSpace;
-        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace TrafficOptimizer.RoadMap.Model
 {
+    using Map;
     public abstract class Vehicle
     {
         private static uint _instances;
@@ -11,54 +12,66 @@ namespace TrafficOptimizer.RoadMap.Model
             private set;
         }
 
+        /// <summary>
+        /// Длинна транспортного средства
+        /// </summary>
         public float Length
         {
             get;
             private set;
         }
+        /// <summary>
+        /// Ширина транспортного средства
+        /// </summary>
         public float Width
         {
             get;
             private set;
         }
+        /// <summary>
+        /// Высота транспортного средства
+        /// </summary>
         public float Height
         {
             get;
             private set;
         }
 
-        private static Dictionary<VehicleContainer, float> _positons = new Dictionary<VehicleContainer, float>();
-        public float PositionAt(VehicleContainer container)
+        public EndPoint Destination
         {
-            return _positons[container];
-        }
-        public void Enter(VehicleContainer container, float position)
-        {
-            _positons.Add(container, position);
-        }
-        public void Leave(VehicleContainer container)
-        {
-            _positons.Remove(container);
+            get;
+            set;
         }
 
+        /// <summary>
+        /// Текущая скорость движения транспортного средства
+        /// </summary>
         public float Speed
         {
             get;
             set;
         }
+        /// <summary>
+        /// Текущее ускорение транспортного средства
+        /// </summary>
         public float Acceleration
         {
             get;
             set;
         }
 
-        public Vehicle(float length, float width, float height)
+        public Vehicle(float length, float width, float height, EndPoint destination)
         {
             ID = _instances++;
 
             Length = length;
             Width = width;
             Height = height;
+
+            Destination = destination;
+
+            Speed = 0;
+            Acceleration = 0;
         }
     }
 }

@@ -26,6 +26,11 @@ namespace TrafficOptimizer.RoadMap
             get;
             private set;
         }
+        public VehicleController VehicleController
+        {
+            get;
+            private set;
+        }
 
         public Direction GetDirection(PointF p1, PointF p2)
         {
@@ -142,6 +147,8 @@ namespace TrafficOptimizer.RoadMap
                 RoadMapParametrs = parameters;
             else
                 RoadMapParametrs = new RoadMapParameters();
+
+            VehicleController = new VehicleController(this);
         }
         public RoadMap(Graph graph, RoadMapParameters parameters)
         {
