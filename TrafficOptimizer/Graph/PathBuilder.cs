@@ -23,32 +23,43 @@ namespace TrafficOptimizer.Graph
             
             while(true)
             {
+                // Выбераем узел, с которым работаем
                 Node recent = null;
+                // определяем минимальную длинну маршрута
                 float best = float.MaxValue;
+                // Для каждого узла из не-посещенных проверяем
                 foreach (var n in notVisited)
                 {
+                    // Если от текущего узла к не посещенному есть маршрут и его вес меньше текущего
                     if (track.ContainsKey(n) && track[n].Price < best)
                     {
+                        // Выбираем этот узел как текущий
                         recent = n;
+                        // Отмечаем вес грани к этому узлу
                         best = track[n].Price;
                     }
                 }
+                // Если от этого узла не идет ниодной грани
                 if (recent == null)
                 {
+                    // Мы закончили - возвращаем путь с одним узлом
                     res = new Path(task);
                     res.Nodes.Add(task.Source);
                     return res;
                 }
 
+                // Если мы дошли до узла назначения - мы нашли маршрут
                 if (recent == task.Destination)
                     break;
 
+                // Проверяем все прилежащие грани
                 foreach (var e in recent.RelatedEdges)
                 {
                     Direction td = new Direction(recent, e.Key);
                     // Не идти по путям, которые запрещены
                     if (edges.ContainsKey(td))
                     {
+                        // Запоминаем вес путь до этого узла
                         var currPrice = track[recent].Price + edges[td].Weight;
                         var nextNode = e.Key;
                         if (!track.ContainsKey(nextNode) || track[nextNode].Price > currPrice)

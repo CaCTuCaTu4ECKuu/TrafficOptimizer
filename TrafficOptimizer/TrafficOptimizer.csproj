@@ -47,13 +47,11 @@
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Graph\Model\Node.cs" />
     <Compile Include="Graph\Model\Path.cs" />
-    <Compile Include="RoadMap\Map\EndPoint.cs" />
     <Compile Include="RoadMap\Model\Streak.cs" />
     <Compile Include="RoadMap\Model\VehicleContainer.cs" />
-    <Compile Include="RoadMap\Map\Intersection.cs" />
     <Compile Include="RoadMap\Model\Line.cs" />
     <Compile Include="RoadMap\Model\Road.cs" />
-    <Compile Include="RoadMap\Map\Section.cs" />
+    <Compile Include="RoadMap\Model\Section.cs" />
     <Compile Include="RoadMap\Model\Vehicles\Car.cs" />
     <Compile Include="RoadMap\Model\View2D\Line2D.cs" />
     <Compile Include="RoadMap\Model\View2D\Road2D.cs" />
