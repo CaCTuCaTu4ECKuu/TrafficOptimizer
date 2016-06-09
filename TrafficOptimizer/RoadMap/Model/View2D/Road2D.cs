@@ -10,6 +10,7 @@ namespace TrafficOptimizer.RoadMap.Model
 {
     using Graph.Model;
     using TrafficOptimizer.RoadMap;
+    using Tools;
 
     [DebuggerDisplay("[{PrimaryLine.Edge.Source.ID}]-[{PrimaryLine.Edge.Destination.ID}] {StartPoint} - {EndPoint}")]
     public partial class Road
@@ -43,11 +44,11 @@ namespace TrafficOptimizer.RoadMap.Model
 
         public void Move(PointF newStart, PointF newEnd)
         {
-            StartPoint = newStart;
-            EndPoint = newEnd;
+            StartPoint = Tools.PointBetween(newStart, newEnd, RoadMap.RoadMapParametrs.StreakSize);
+            EndPoint = Tools.PointBetween(newEnd, newStart, RoadMap.RoadMapParametrs.StreakSize);
 
-            PrimaryLine.Move(newStart, newEnd);
-            SlaveLine.Move(newEnd, newStart);
+            PrimaryLine.Move(StartPoint, EndPoint);
+            SlaveLine.Move(EndPoint, StartPoint);
         }
     }
 }

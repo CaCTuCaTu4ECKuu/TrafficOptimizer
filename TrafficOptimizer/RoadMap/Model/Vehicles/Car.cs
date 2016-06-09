@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.Model.Vehicles
 {
-    using Map;
 
     public class Car : Vehicle
     {
 
-        public Car(float length, float width, float height, EndPoint destination) 
+        public Car(float length, float width, float height, Section destination) 
             : base(length, width, height, destination)
         {
 

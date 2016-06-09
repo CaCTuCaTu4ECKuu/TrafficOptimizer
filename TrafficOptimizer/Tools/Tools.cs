@@ -35,5 +35,19 @@ namespace TrafficOptimizer.Tools
             float y = SrcPoint.Y + sign * (height * (DstPoint.X - SrcPoint.X) / d);
             return new PointF(x, y);
         }
+        /// <summary>
+        /// Находит точку, находящуюся между двумя точками на указанном расстоянии от начала
+        /// </summary>
+        /// <param name="src">Начальная точка</param>
+        /// <param name="dst">Конечная точка</param>
+        /// <param name="distance">Расстояние от первой точки</param>
+        public static PointF PointBetween(PointF src, PointF dst, float distance)
+        {
+            float dist = Distance(src, dst) - distance;
+            float ratio = distance / dist;
+            float x = (src.X + (ratio * dst.X)) / (1 + ratio);
+            float y = (src.Y + (ratio * dst.Y)) / (1 + ratio);
+            return new PointF(x, y);
+        }
     }
 }

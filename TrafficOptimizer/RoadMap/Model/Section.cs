@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    public class Section
+    public partial class Section
     {
         public List<Road> InRoads
         {
@@ -20,26 +20,36 @@ namespace TrafficOptimizer.RoadMap.Model
             private set;
         }
 
-        private void setSection(List<Road> inRoads, List<Road> outRoads)
+        public Road MaxStreaks
         {
-            InRoads = inRoads;
-            OutRoads = outRoads;
+            get
+            {
+                Road max = InRoads.Count > 0 ? InRoads[0] : OutRoads.Count > 0 ? OutRoads[0] : null;
+                if (max != null)
+                {
+                    foreach (var r in InRoads)
+                    {
+                        if (r.Streaks > max.Streaks)
+                            max = r;
+                    }
+                    foreach (var r in OutRoads)
+                    {
+                        if (r.Streaks > max.Streaks)
+                            max = r;
+                    }
+                }
+                return max;
+            }
         }
+
         public Section(IEnumerable<Road> inRoads, IEnumerable<Road> outRoads)
         {
-            setSection(new List<Road>(inRoads), new List<Road>(outRoads));
-        }
-        public Section(Road inRoad, Road outRoad)
-        {
-            List<Road> inr = new List<Road>();
-            List<Road> outr = new List<Road>();
-
-            if (inRoad != null)
-                inr.Add(inRoad);
-            if (outRoad != null)
-                outr.Add(outRoad);
-
-            setSection(inr, outr);
+            InRoads = new List<Road>();
+            if (inRoads != null)
+                InRoads.AddRange(inRoads);
+            OutRoads = new List<Road>();
+            if (outRoads != null)
+                OutRoads.AddRange(outRoads);
         }
     }
 }

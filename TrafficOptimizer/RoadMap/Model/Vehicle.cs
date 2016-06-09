@@ -2,7 +2,6 @@
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    using Map;
     public abstract class Vehicle
     {
         private static uint _instances;
@@ -37,7 +36,7 @@ namespace TrafficOptimizer.RoadMap.Model
             private set;
         }
 
-        public EndPoint Destination
+        public Section Destination
         {
             get;
             set;
@@ -60,7 +59,7 @@ namespace TrafficOptimizer.RoadMap.Model
             set;
         }
 
-        public Vehicle(float length, float width, float height, EndPoint destination)
+        public Vehicle(float length, float width, float height, Section destination)
         {
             ID = _instances++;
 
