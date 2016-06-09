@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
@@ -11,7 +7,7 @@ namespace TrafficOptimizer.RoadMap.Model
         /// <summary>
         /// Толщина бордюра
         /// </summary>
-        public float BorderSize
+        public float DividingLineSize
         {
             get;
             set;
@@ -34,29 +30,33 @@ namespace TrafficOptimizer.RoadMap.Model
                 return StreakSize / 2;
             }
         }
-        /// <summary>
-        /// Размер машины (радиус круга)
-        /// </summary>
-        public float CarSize
-        {
-            get;
-            set;
-        }
+
         /// <summary>
         /// Расстояние просмотра
         /// </summary>
-        public float ViewDistance
+        public float ViewScale
         {
             get;
             set;
         }
+        public float ViewScaleStep
+        {
+            get;
+            set;
+        }
+        /// <summary>
+        /// Смещение камеры относительно центра
+        /// </summary>
+        public PointF ViewOffset;
 
         public RoadMapParameters()
         {
-            BorderSize = 0.1f;
-            StreakSize = 1.2f;
-            CarSize = 1f;
-            ViewDistance = 25f;
+            DividingLineSize = 0.11f;
+            StreakSize = 5.0f;
+
+            ViewScale = 0.005f;
+            ViewScaleStep = 0.5f;
+            ViewOffset = new Point(0, 0);
         }
     }
 }

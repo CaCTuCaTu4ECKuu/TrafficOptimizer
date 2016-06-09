@@ -10,7 +10,6 @@ namespace TrafficOptimizer.RoadMap
     using Graph;
     using Graph.Model;
     using Model;
-    using Map;
     using Tools;
 
     public partial class RoadMap
@@ -74,21 +73,33 @@ namespace TrafficOptimizer.RoadMap
             }
             else
             {
+                Node n1 = _nodes.ContainsKey(start) ? _nodes[start] : Graph.MakeNode();
+                Node n2 = _nodes.ContainsKey(end) ? _nodes[end] : Graph.MakeNode();
+
+                Section s1 = _sections.ContainsKey(n1) ? _sections[n1] : new Section(null, null);
+                Section s2 = _sections.ContainsKey(n2) ? _sections[n2] : new Section(null, null);
+
                 float weight = Tools.Distance(start, end);
-                Node n1 = _nodes[start] ?? Graph.MakeNode();
-                Node n2 = _nodes[end] ?? Graph.MakeNode();
-                Road[] r = new Road[1];
 
-                // Если это начало или конец существующей дороги
-
-                // Добавляем новую дорогу
-
-                // Обозначаем граф
                 Edge prim_e = Graph.Unite(n1, n2, weight);
                 Edge slave_e = Graph.Unite(n2, n1, weight);
 
+                Road r = new Road(this, prim_e, slave_e, start, end);
+
+                if (!_sections.ContainsKey(n1))
+                {
+                    _sections.Add(n1, s1);
+                }
+                _sections[n1].OutRoads.Add(r);
+                if (!_sections.ContainsKey(n2))
+                {
+                    _sections.Add(n2, s2);
+                }
+                _sections[n2].InRoads.Add(r);
+
+                // Обозначаем граф
+
                 // Добавляем расположение
-                r[0] = new Road(this, prim_e, slave_e, start, end);
 
                 if (!_nodes.ContainsKey(start))
                     _nodes.Add(start, n1);
@@ -99,24 +110,9 @@ namespace TrafficOptimizer.RoadMap
                 if (!_points.ContainsKey(n2))
                     _points.Add(n2, end);
 
-                if (!_sections.ContainsKey(n1))
-                {
-                    _sections.Add(n1, new EndPoint(null, r));
-                }
-                else
-                {
-                   _sections[n1].OutRoads.Add(r[0]);
-                }
-                if (!_sections.ContainsKey(n2))
-                {
-                    _sections.Add(n2, new EndPoint(r, null));
-                }
-                else
-                {
-                    _sections[n2].InRoads.Add(r[0]);
-                }
 
-                _roads.Add(new Direction(n1, n2), r[0]);
+
+                _roads.Add(new Direction(n1, n2), r);
             }
         }
         public void ChangePosition(PointF oldPosition, PointF newPosition)
@@ -125,7 +121,7 @@ namespace TrafficOptimizer.RoadMap
         }
         public void AddInterSection(Point position)
         {
-            Intersection isec = new Intersection(null, null);
+            Section isec = new Section(null, null);
             if (_nodes.ContainsKey(position))
             {
 

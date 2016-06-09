@@ -68,7 +68,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Visualize\Controller.cs" />
     <Compile Include="Visualize\Gl_RoadMap.cs" />
+    <Compile Include="Visualize\MouseInterractMode.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
