@@ -49,33 +49,33 @@ namespace TrafficOptimizer.RoadMap.Model
             get { return Edge.Weight; }
         }
 
-        public List<Streak> Streaks
+        private List<Streak> _streaks;
+        public IEnumerable<Streak> Streaks
         {
-            get;
-            private set;
+            get { return _streaks.AsReadOnly(); }
         }
         public void AddStreak()
         {
             Streak newStreak = new Streak(this, null);
-            if (Streaks.Count > 0)
+            if (_streaks.Count > 0)
             {
-                Streak last = Streaks[Streaks.Count - 1];
+                Streak last = _streaks[_streaks.Count - 1];
                 newStreak.AddDestination(newStreak);
                 last.AddDestination(newStreak);
             }
-            Streaks.Add(newStreak);
+            _streaks.Add(newStreak);
         }
         public void RemoveStreak()
         {
-            if (Streaks.Count > 0)
+            if (_streaks.Count > 0)
             {
-                Streak last = Streaks[Streaks.Count - 1];
-                if (Streaks.Count > 1)
+                Streak last = _streaks[_streaks.Count - 1];
+                if (_streaks.Count > 1)
                 {
-                    Streak preLast = Streaks[Streaks.Count - 2];
+                    Streak preLast = _streaks[_streaks.Count - 2];
                     preLast.RemoveDestination(last);
                 }
-            Streaks.Remove(last);
+                _streaks.Remove(last);
             }
         }
 
@@ -83,7 +83,7 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             Road = road;
             Edge = edge;
-            Streaks = new List<Streak>();
+            _streaks = new List<Streak>();
         }
     }
 }

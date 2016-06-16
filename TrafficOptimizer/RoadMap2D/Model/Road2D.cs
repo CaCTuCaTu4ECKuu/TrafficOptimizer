@@ -61,7 +61,7 @@ namespace TrafficOptimizer.RoadMap2D.Model
         public static Road2D GetRoad(Road road, PointF start, PointF end, float streakWidth)
         {
             if (road != null)
-                return new Road2D(start, end, road.PrimaryLine.Streaks.Count, road.SlaveLine.Streaks.Count, streakWidth);
+                return new Road2D(start, end, road.PrimaryLine.Streaks.Count(), road.SlaveLine.Streaks.Count(), streakWidth);
             return null;
         }
     }

@@ -76,14 +76,14 @@ namespace TrafficOptimizer.RoadMap
                 if (road.PrimaryLine.Source == source)
                 {
                     // Мы добавляем основную дорогу
-                    if (road.PrimaryLine.Streaks.Count == 0)
+                    if (road.PrimaryLine.Streaks.Count() == 0)
                         Graph.ChangeWeight(_sections[road.Source], _sections[road.Destination], weight);
                     road.PrimaryLine.AddStreak();
                 }
                 else
                 {
                     // Мы добавляем встречную
-                    if (road.SlaveLine.Streaks.Count == 0)
+                    if (road.SlaveLine.Streaks.Count() == 0)
                         Graph.ChangeWeight(_sections[road.Destination], _sections[road.Source], weight);
                     road.SlaveLine.AddStreak();
                 }
@@ -129,7 +129,7 @@ namespace TrafficOptimizer.RoadMap
         {
             if (_roads.ContainsValue(line.Road))
             {
-                switch (line.Streaks.Count)
+                switch (line.Streaks.Count())
                 {
                     case 0:
                         break;

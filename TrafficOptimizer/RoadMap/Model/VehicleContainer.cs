@@ -11,7 +11,7 @@ namespace TrafficOptimizer.RoadMap.Model
             private set;
         }
 
-        protected List<VehicleContainer> _destinations;
+        protected List<VehicleContainer> _destinations = new List<VehicleContainer>();
         public virtual IEnumerable<VehicleContainer> Destinations
         {
             get { return _destinations.AsReadOnly(); }
@@ -25,17 +25,16 @@ namespace TrafficOptimizer.RoadMap.Model
         public VehicleContainer(IEnumerable<VehicleContainer> destinations)
         {
             ID = _instances++;
-            _destinations = new List<VehicleContainer>();
             if (destinations != null)
                 _destinations.AddRange(destinations);
         }
 
-        public void AddDestination(VehicleContainer dst)
+        public virtual void AddDestination(VehicleContainer dst)
         {
-            if (_destinations.Contains(dst))
+            if (!_destinations.Contains(dst))
                 _destinations.Add(dst);
         }
-        public void RemoveDestination(VehicleContainer dst)
+        public virtual void RemoveDestination(VehicleContainer dst)
         {
             _destinations.Remove(dst);
         }

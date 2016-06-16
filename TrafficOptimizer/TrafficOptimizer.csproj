@@ -62,6 +62,7 @@
     <Compile Include="RoadMap2D\Transport\PointCar.cs" />
     <Compile Include="RoadMap2D\Transport\TrafficRegulation.cs" />
     <Compile Include="RoadMap2D\VehiclesMap.cs" />
+    <Compile Include="RoadMap\Model\SectionLink.cs" />
     <Compile Include="RoadMap\Model\Segment.cs" />
     <Compile Include="RoadMap\Model\Line.cs" />
     <Compile Include="RoadMap\Model\Road.cs" />
