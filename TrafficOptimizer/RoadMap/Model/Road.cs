@@ -4,10 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    public partial class Road
+    using Graph.Model;
+
+    [DebuggerDisplay("[{ID}] {Source.ID}-{Destination.ID} | ({Streaks})")]
+    public class Road
     {
         private static uint _instances = 0;
         public uint ID
@@ -20,6 +24,20 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get;
             private set;
+        }
+        public Section Source
+        {
+            get;
+            private set;
+        }
+        public Section Destination
+        {
+            get;
+            private set;
+        }
+        public Segment Segment
+        {
+            get { return new Segment(Source, Destination); }
         }
 
         /// <summary>
@@ -49,15 +67,16 @@ namespace TrafficOptimizer.RoadMap.Model
             }
         }
 
-        /// <summary>
-        /// Длинна отрезка
-        /// </summary>
-        public float Length
+        public Road(RoadMap roadMap, Section source, Section destination, Edge primary, Edge slave)
         {
-            get
-            {
-                return PrimaryLine.Length;
-            }
+            ID = _instances++;
+
+            RoadMap = roadMap;
+            Source = source;
+            Destination = destination;
+
+            PrimaryLine = new Line(this, primary);
+            SlaveLine = new Line(this, slave);
         }
     }
 }

@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid x:Name="Tray" Grid.Row="0" MinHeight="25">
             <Grid.ColumnDefinitions>
@@ -35,6 +36,16 @@
             </Grid.ColumnDefinitions>
             <Grid Width="250" Height="auto"/>
             <sharpGL:OpenGLControl x:Name="OpenGLWindow" Grid.Column="1" DrawFPS="True" OpenGLInitialized="OpenGLWindow_OpenGLInitialized" OpenGLDraw="OpenGLWindow_OpenGLDraw"/>
+        </Grid>
+        <Grid Grid.Row="2" Height="25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label x:Name="RecoverPosLabel" Content="Rec" Grid.Column="0" />
+            <Label x:Name="RealPosLabel" Content="Real" Grid.Column="1" />
+            <Label x:Name="UniPosLabel" Content="Uni" Grid.Column="2" />
         </Grid>
     </Grid>
 </Window>

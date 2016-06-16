@@ -26,7 +26,7 @@ namespace TrafficOptimizer.Graph
                 // Выбераем узел, с которым работаем
                 Node recent = null;
                 // определяем минимальную длинну маршрута
-                float best = float.MaxValue;
+                float best = float.PositiveInfinity;
                 // Для каждого узла из не-посещенных проверяем
                 foreach (var n in notVisited)
                 {
@@ -80,6 +80,7 @@ namespace TrafficOptimizer.Graph
             return res;
 
         }
+
         private class SearchData
         {
             public float Price { get; set; }

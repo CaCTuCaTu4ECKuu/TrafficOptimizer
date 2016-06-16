@@ -49,5 +49,48 @@ namespace TrafficOptimizer.Tools
             float y = (src.Y + (ratio * dst.Y)) / (1 + ratio);
             return new PointF(x, y);
         }
+
+        #region Collision Detection
+        public static bool IsPointInside(PointF point, PointF center, float radius)
+        {
+            var dx = point.X - center.X;
+            var dy = point.Y - center.Y;
+            var dist = Math.Sqrt(dx*dx + dy*dy);
+            return dist < radius;
+        }
+        public static bool IsLineIntersect(PointF A1, PointF A2, PointF B1, PointF B2)
+        {
+            var denom = ((B2.Y - B1.Y) * (A2.X - A1.X)) -
+                ((B2.X - B1.X) * (A2.Y - A1.Y));
+            return denom != 0;
+        }
+        public static bool IsPointInside(PointF point, PointF[] block)
+        {
+            if (block.Length == 4)
+            {
+                float dist = Distance(block[1], block[3]);
+                PointF center = PointBetween(block[1], block[3], dist / 2);
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (IsLineIntersect(center, point, block[i], block[i + 1]))
+                        return false;
+                }
+                if (IsLineIntersect(center, point, block[3], block[0]))
+                    return false;
+
+                return true;
+            }
+            else
+                throw new FormatException("block must have 4 vertexes, it's a rectangle, sort of");
+        }
+        public static bool IsRoundsIntersect(PointF center1, float radius1, PointF center2, float radius2)
+        {
+            var dx = center1.X - center2.X;
+            var dy = center1.Y - center2.Y;
+            var dist = Math.Sqrt(dx * dx + dy * dy);
+            return dist < radius1 + radius2;
+        }
+        #endregion
     }
 }

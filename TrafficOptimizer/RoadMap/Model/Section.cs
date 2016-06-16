@@ -3,53 +3,87 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    public partial class Section
+    [DebuggerDisplay("[{ID}] In: {InRoads.Count()} Out: {OutRoads.Count()}")]
+    public class Section : VehicleContainer
     {
-        public List<Road> InRoads
-        {
-            get;
-            private set;
-        }
-        public List<Road> OutRoads
-        {
-            get;
-            private set;
-        }
-
-        public Road MaxStreaks
+        private List<Road> _relatedRoads;
+        public IEnumerable<Road> RelatedRoads
         {
             get
             {
-                Road max = InRoads.Count > 0 ? InRoads[0] : OutRoads.Count > 0 ? OutRoads[0] : null;
-                if (max != null)
-                {
-                    foreach (var r in InRoads)
-                    {
-                        if (r.Streaks > max.Streaks)
-                            max = r;
-                    }
-                    foreach (var r in OutRoads)
-                    {
-                        if (r.Streaks > max.Streaks)
-                            max = r;
-                    }
-                }
-                return max;
+                return _relatedRoads.AsReadOnly();
+            }
+        }
+        public IEnumerable<Road> InRoads
+        {
+            get
+            {
+                return _relatedRoads.Where(r => r.PrimaryLine.Destination == this);
+            }
+        }
+        public IEnumerable<Road> OutRoads
+        {
+            get
+            {
+                return _relatedRoads.Where(r => r.SlaveLine.Source == this);
             }
         }
 
-        public Section(IEnumerable<Road> inRoads, IEnumerable<Road> outRoads)
+        public override IEnumerable<VehicleContainer> Destinations
         {
-            InRoads = new List<Road>();
-            if (inRoads != null)
-                InRoads.AddRange(inRoads);
-            OutRoads = new List<Road>();
-            if (outRoads != null)
-                OutRoads.AddRange(outRoads);
+            get
+            {
+                if (_destinations == null)
+                {
+                    _destinations = new List<VehicleContainer>();
+
+                }
+                return _destinations;
+            }
+        }
+        public Dictionary<VehicleContainer, List<VehicleContainer>> Links
+        {
+            get;
+            private set;
+        }
+        public bool AllowToMove(VehicleContainer src,  VehicleContainer dst)
+        {
+            return Destinations.Contains(dst) && Links.ContainsKey(src) && Links[src].Contains(dst);
+        }
+
+
+        public Section(IEnumerable<Road> relatedRoads)
+            : base(null)
+        {
+            _relatedRoads = new List<Road>();
+            if (relatedRoads != null)
+                _relatedRoads.AddRange(relatedRoads);
+            resetDestination();
+        }
+
+        private void resetDestination()
+        {
+            _destinations = null;
+        }
+        public void AddRoad(Road road)
+        {
+            if (!_relatedRoads.Contains(road))
+            {
+                _relatedRoads.Add(road);
+                resetDestination();
+            }
+        }
+        public void RemoveRoad(Road road)
+        {
+            if (_relatedRoads.Contains(road))
+            {
+                _relatedRoads.Remove(road);
+                resetDestination();
+            }
         }
     }
 }

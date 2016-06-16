@@ -6,21 +6,13 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Diagnostics;
 
-namespace TrafficOptimizer.RoadMap.Model
+namespace TrafficOptimizer.RoadMap2D.Model
 {
     using Tools;
 
     [DebuggerDisplay("{MiddleStart} - {MiddleEnd}")]
-    public partial class Streak
+    public class Streak2D
     {
-        public RoadMapParameters Parameters
-        {
-            get
-            {
-                return Line.Road.RoadMap.RoadMapParametrs;
-            }
-        }
-
         /// <summary>
         /// Начало средины полосы
         /// </summary>
@@ -71,34 +63,21 @@ namespace TrafficOptimizer.RoadMap.Model
         }
 
         /// <summary>
-        /// Создает новую полосу движения и задает ее расположение на плоскости
-        /// </summary>
-        /// <param name="line">Сторона движения, частью которой является эта полоса</param>
-        /// <param name="midStart">Точка начала центра полосы</param>
-        /// <param name="midEnd">Точка конца центра полосы</param>
-        public Streak(Line line, PointF midStart, PointF midEnd)
-        {
-            Line = line;
-
-            Move(midStart, midEnd);
-        }
-
-        /// <summary>
         /// Сдвигает расположение полосы в координатной плоскости
         /// </summary>
         /// <param name="newStart">Точка начало нового центра полосы</param>
         /// <param name="newEnd">Точка окончания нового центра полосы</param>
-        public void Move(PointF newStart, PointF newEnd)
+        public Streak2D(PointF newStart, PointF newEnd, float streakHalfWidth)
         {
             MiddleStart = newStart;
             MiddleEnd = newEnd;
 
             // Right Border
-            BorderLeftStart = Tools.HeightPoint(Parameters.StreakHalf, true, MiddleStart, MiddleEnd);
-            BorderLeftEnd = Tools.HeightPoint(Parameters.StreakHalf, false, MiddleEnd, MiddleStart);
+            BorderLeftStart = Tools.HeightPoint(streakHalfWidth, true, MiddleStart, MiddleEnd);
+            BorderLeftEnd = Tools.HeightPoint(streakHalfWidth, false, MiddleEnd, MiddleStart);
             // Left Border
-            BorderRightStart = Tools.HeightPoint(Parameters.StreakHalf, false, MiddleStart, MiddleEnd);
-            BorderRightEnd = Tools.HeightPoint(Parameters.StreakHalf, true, MiddleEnd, MiddleStart);
+            BorderRightStart = Tools.HeightPoint(streakHalfWidth, false, MiddleStart, MiddleEnd);
+            BorderRightEnd = Tools.HeightPoint(streakHalfWidth, true, MiddleEnd, MiddleStart);
         }
     }
 

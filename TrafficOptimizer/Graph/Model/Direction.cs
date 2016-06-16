@@ -6,44 +6,60 @@ namespace TrafficOptimizer.Graph.Model
 {
     [DebuggerDisplay("Source.ID => Destination.ID")]
     [Serializable]
-    public class Direction : IEqualityComparer<Direction>, IEquatable<Direction>
+    public class Direction : IEquatable<Direction>
     {
-        private KeyValuePair<Node, Node> _key;
-
         /// <summary>
         /// Начальный узел
         /// </summary>
         public Node Source
         {
-            get { return _key.Key; }
+            get;
+            private set;
         }
         /// <summary>
         /// Конечный узел
         /// </summary>
         public Node Destination
         {
-            get { return _key.Value; }
+            get;
+            private set;
+        }
+
+        public Direction Inversed
+        {
+            get
+            {
+                return new Direction(Destination, Source);
+            }
+        }
+        public bool IsInversed(Direction direction)
+        {
+            return Inversed == direction;
         }
 
         public Direction(Node src, Node dst)
         {
-            _key = new KeyValuePair<Node, Node>(src, dst);
-        }
-        public bool Equals(Direction x, Direction y)
-        {
-            return x.Source == y.Source && x.Destination == y.Destination;
+            Source = src;
+            Destination = dst;
         }
         public bool Equals(Direction other)
         {
-            return Equals(this, other);
+            return Source == other.Source && Destination == other.Destination;
         }
-        public int GetHashCode(Direction obj)
+        public override bool Equals(object obj)
         {
-            return obj.GetHashCode();
+            if (obj == null)
+                return false;
+
+            Direction d = obj as Direction;
+            if (d == null)
+                return false;
+
+            return Equals(d);
         }
         public override int GetHashCode()
         {
-            return _key.Key.GetHashCode() ^ _key.Value.GetHashCode();
+            return Source.GetHashCode() ^ Destination.GetHashCode();
         }
     }
 }

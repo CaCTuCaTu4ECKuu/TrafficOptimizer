@@ -5,14 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using SharpGL;
+using SharpGL.WPF;
 
 namespace UserInterface.Visualize
 {
-    using TrafficOptimizer.RoadMap;
+    using TrafficOptimizer.RoadMap2D;
 
-    public class Gl_RoadMap : RoadMap
+    public class Gl_RoadMap
     {
+        public OpenGLControl OGL_Control
+        {
+            get;
+            private set;
+        }
         public OpenGL gl
+        {
+            get
+            {
+                return OGL_Control.OpenGL;
+            }
+        }
+        public RoadMap2D RoadMap
         {
             get;
             private set;
@@ -23,96 +36,73 @@ namespace UserInterface.Visualize
             private set;
         }
 
-        public Gl_RoadMap(OpenGL ogl)
+        public Gl_RoadMap(OpenGLControl ogl)
         {
-            gl = ogl;
+            OGL_Control = ogl;
+            RoadMap = new RoadMap2D(gl);
             Controller = new Controller(this);
 
-            AddRoad(new Point(-25, 0), new Point(0, 0));
-            AddRoad(new Point(0, 0), new Point(50, 50));
-            AddRoad(new Point(50, 50), new Point(50, -50));
-            AddRoad(new Point(-25, 25), new Point(0, 0));
-            AddRoad(new Point(-50, 25), new Point(-25, 25));
-            AddRoad(new Point(50, -50), new Point(25, -25));
-            AddRoad(new Point(-25, -25), new Point(25, -25));
-            AddRoad(new Point(-30, 35), new Point(28, 30));
+            RoadMap.AddRoad(new Point(-50, -50), new PointF(-50, 50));
+            RoadMap.AddRoad(new Point(-50, 50), new PointF(50, 50));
+            RoadMap.AddRoad(new Point(50, 50), new PointF(50, -50));
+            RoadMap.AddRoad(new Point(50, -50), new PointF(-50, -50));
+            RoadMap.AddRoad(new Point(50, 50), new Point(-50, -50));
+
+            RoadMap.AddRoad(new PointF(-75, 75), new PointF(-50, 50));
+            RoadMap.AddRoad(new PointF(50, -50), new PointF(75, -75));
+
+            RoadMap.AddRoad(new PointF(-200, 100), new PointF(-100, 100));
+            RoadMap.AddRoad(new PointF(-100, 100), new PointF(0, 100));
+
+            RoadMap.AddRoad(new PointF(0, 100), new PointF(50, 50));
         }
 
-        public void DrawRoads()
-        {
-            gl.Enable(OpenGL.GL_LINE_SMOOTH);
-            gl.LineWidth(RoadMapParametrs.DividingLineSize);
-
-            List<uint> drawed = new List<uint>();
-            
-            foreach (var e in _sections)
-            {
-                var r = e.Value.MaxStreaks;
-                if (r != null)
-                {
-                    var point = _points[e.Key];
-                    gl.Begin(OpenGL.GL_LINE_LOOP);
-                    gl.Color(1f, 0.5f, 0f);
-                    for (int a = 1; a <= 360; a ++)
-                    {
-                        double h = a * Math.PI / 180;
-                        gl.Vertex(point.X + Math.Cos(h) * RoadMapParametrs.StreakSize, point.Y + Math.Sin(h) * RoadMapParametrs.StreakSize, 0);
-                    }
-                    gl.End();
-                }
-            }
-
-            foreach (var road in _roads.Values)
-            {
-                if (!drawed.Contains(road.ID))
-                {
-                    drawed.Add(road.ID);
-                    gl.Begin(OpenGL.GL_LINES);
-                    gl.Color(0f, 0f, 0f);
-
-                    gl.Vertex(road.StartPoint.X, road.StartPoint.Y);
-                    gl.Vertex(road.EndPoint.X, road.EndPoint.Y);
-
-                    gl.Color(1f, 0, 0);
-                    gl.Vertex(road.PrimaryLine.LineRightStart.X, road.PrimaryLine.LineRightStart.Y);
-                    gl.Vertex(road.PrimaryLine.LineRightEnd.X, road.PrimaryLine.LineRightEnd.Y);
-
-                    gl.Color(0, 1f, 0);
-                    gl.Vertex(road.SlaveLine.LineRightStart.X, road.SlaveLine.LineRightStart.Y);
-                    gl.Vertex(road.SlaveLine.LineRightEnd.X, road.SlaveLine.LineRightEnd.Y);
-
-                    gl.Color(0, 0, 1f);
-                    for (int i = 0; i < road.PrimaryLine.Streaks.Count - 1; i++)
-                    {
-                        var streak = road.PrimaryLine.Streaks[i];
-                        gl.Vertex(streak.BorderRightStart.X, streak.BorderRightStart.Y);
-                        gl.Vertex(streak.BorderRightEnd.X, streak.BorderRightEnd.Y);
-                    }
-                    for (int i = 0; i < road.SlaveLine.Streaks.Count - 1; i++)
-                    {
-                        var streak = road.SlaveLine.Streaks[i];
-                        gl.Vertex(streak.BorderRightStart.X, streak.BorderRightStart.Y);
-                        gl.Vertex(streak.BorderRightEnd.X, streak.BorderRightEnd.Y);
-                    }
-
-                    gl.End();
-                }
-            }
-        }
-        public void DrawCars()
-        {
-
-        }
         public void Draw()
         {
             gl.LoadIdentity();
-            gl.Translate(RoadMapParametrs.ViewOffset.X, RoadMapParametrs.ViewOffset.Y, 0);
-            gl.Translate(0, 0, -1f);
-            gl.Scale(RoadMapParametrs.ViewScale, RoadMapParametrs.ViewScale, RoadMapParametrs.ViewScale);
+            gl.Translate(0, 0, -2);
 
-            DrawRoads();
-            DrawCars();
+            gl.Begin(OpenGL.GL_LINES);
+            gl.Color(0.5f, 0.5f, 0.5f);
+
+            gl.Vertex(0, 0);
+            gl.Vertex(0, 1);
+            gl.Vertex(0, 0);
+            gl.Vertex(0, -1);
+            gl.Vertex(0, 0);
+            gl.Vertex(1, 0);
+            gl.Vertex(0, 0);
+            gl.Vertex(-1, 0);
+
+            gl.End();
+
+            gl.Scale(0.005f, 0.005f, 0.005f);
+            RoadMap.Draw();
             Controller.Draw();
         }
+        #region Tools
+        public PointF ScaleFromUniformCoords(PointF uniPoint)
+        {
+            return new PointF();
+            /*
+            var scale = RoadMapParametrs.ViewScale;
+            var angle = (float)(Math.Sqrt(3) / 2);
+            var x = uniPoint.X / scale / 2 * angle;
+            var y = uniPoint.Y / scale / 2 * angle;
+            var xo = RoadMapParametrs.ViewOffset.X / scale;
+            var yo = RoadMapParametrs.ViewOffset.Y / scale;
+            return new PointF((float)Math.Round((x + xo), 2), (float)Math.Round((y + yo), 2));
+            */
+        }
+        public PointF ScaleToUniformCoords(PointF point)
+        {
+            return new PointF();
+            /*
+            var scale = RoadMapParametrs.ViewScale;
+            var angle = (float)Math.Sin(45);
+            return new PointF((point.X - RoadMapParametrs.ViewOffset.X) * scale * 2 / angle, (point.Y - RoadMapParametrs.ViewOffset.Y) * scale * 2 / angle);
+            */
+        }
+        #endregion
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,154 +9,170 @@ namespace TrafficOptimizer.RoadMap
     using Graph;
     using Graph.Model;
     using Model;
-    using Tools;
 
-    public partial class RoadMap
+    public class RoadMap
     {
-        protected Dictionary<PointF, Node> _nodes = new Dictionary<PointF, Node>();
-        protected Dictionary<Node, PointF> _points = new Dictionary<Node, PointF>();
+        protected Dictionary<Section, Node> _sections = new Dictionary<Section, Node>();
+        protected Dictionary<Segment, Road> _roads = new Dictionary<Segment, Road>();
 
-        protected Dictionary<Node, Section> _sections = new Dictionary<Node, Section>();
-        protected Dictionary<Direction, Road> _roads = new Dictionary<Direction, Road>();
+        public List<Road> Roads
+        {
+            get
+            {
+                return _roads.Values.ToList();
+            }
+        }
+
+        public Node GetNode(Section section)
+        {
+            if (section != null && _sections.ContainsKey(section))
+                return _sections[section];
+            return null;
+        }
+        public Segment GetSegment(Road road)
+        {
+            if (road != null)
+                return _roads.Where(r => r.Value == road).Select(e => e.Key).FirstOrDefault();
+            return null;
+        }
+        public Road GetRoad(Segment segment)
+        {
+            if (segment != null && _roads.ContainsKey(segment))
+                return _roads[segment];
+            return null;
+        }
+        public Section GetSection(Node node)
+        {
+            if (node != null)
+                return _sections.Where(n => n.Value == node).Select(e => e.Key).FirstOrDefault();
+            return null;
+        }
 
         public Graph Graph
         {
             get;
             private set;
         }
-        public VehicleController VehicleController
+        public RatioController RatioController
         {
             get;
             private set;
         }
 
-        public Direction GetDirection(PointF p1, PointF p2)
+        public Section MakeSection()
         {
-            if (_nodes.ContainsKey(p1) && _nodes.ContainsKey(p2))
-                return new Direction(_nodes[p1], _nodes[p2]);
-            return null;
+            Node n = Graph.MakeNode();
+            Section s = new Section(null);
+            _sections.Add(s, n);
+            return s;
         }
-        protected Road GetRoad(Direction dir)
+        public Road SetRoad(Section source, Section destination, float weight)
         {
-            if (dir != null)
-            {
-                if (_roads.ContainsKey(dir))
-                    return _roads[dir];
-                else if (_roads.ContainsKey(dir = new Direction(dir.Destination, dir.Source)))
-                    return _roads[dir];
-            }
-            return null;
+            Segment seg = new Segment(source, destination);
+            Road road = GetRoad(seg);
 
-        }
-
-        /// <summary>
-        /// Добавление новой дороги или полосы на карту 
-        /// </summary>
-        /// <param name="start">Начальная точка</param>
-        /// <param name="end">Конечная точка</param>
-        public void AddRoad(PointF start, PointF end)
-        {
-            Road road = GetRoad(GetDirection(start, end));
             if (road != null)
             {
-                if (road.PrimaryLine.Edge.Source == _nodes[start])
+                if (road.PrimaryLine.Source == source)
                 {
                     // Мы добавляем основную дорогу
-                    road.PrimaryLine.ChangeStreaks(road.PrimaryLine.Streaks.Count + 1);
+                    if (road.PrimaryLine.Streaks.Count == 0)
+                        Graph.ChangeWeight(_sections[road.Source], _sections[road.Destination], weight);
+                    road.PrimaryLine.AddStreak();
                 }
                 else
                 {
                     // Мы добавляем встречную
-                    road.SlaveLine.ChangeStreaks(road.SlaveLine.Streaks.Count + 1);
+                    if (road.SlaveLine.Streaks.Count == 0)
+                        Graph.ChangeWeight(_sections[road.Destination], _sections[road.Source], weight);
+                    road.SlaveLine.AddStreak();
                 }
             }
             else
             {
-                Node n1 = _nodes.ContainsKey(start) ? _nodes[start] : Graph.MakeNode();
-                Node n2 = _nodes.ContainsKey(end) ? _nodes[end] : Graph.MakeNode();
+                Edge e1 = Graph.Unite(_sections[source], _sections[destination], weight);
+                Edge e2 = Graph.Unite(_sections[destination], _sections[source], weight);
 
-                Section s1 = _sections.ContainsKey(n1) ? _sections[n1] : new Section(null, null);
-                Section s2 = _sections.ContainsKey(n2) ? _sections[n2] : new Section(null, null);
+                road = new Road(this, source, destination, e1, e2);
+                road.PrimaryLine.AddStreak();
+                road.SlaveLine.AddStreak();
+                _roads.Add(seg, road);
 
-                float weight = Tools.Distance(start, end);
-
-                Edge prim_e = Graph.Unite(n1, n2, weight);
-                Edge slave_e = Graph.Unite(n2, n1, weight);
-
-                Road r = new Road(this, prim_e, slave_e, start, end);
-
-                if (!_sections.ContainsKey(n1))
-                {
-                    _sections.Add(n1, s1);
-                }
-                _sections[n1].OutRoads.Add(r);
-                if (!_sections.ContainsKey(n2))
-                {
-                    _sections.Add(n2, s2);
-                }
-                _sections[n2].InRoads.Add(r);
-
-                // Обозначаем граф
-
-                // Добавляем расположение
-
-                if (!_nodes.ContainsKey(start))
-                    _nodes.Add(start, n1);
-                if (!_nodes.ContainsKey(end))
-                    _nodes.Add(end, n2);
-                if (!_points.ContainsKey(n1))
-                    _points.Add(n1, start);
-                if (!_points.ContainsKey(n2))
-                    _points.Add(n2, end);
-
-
-
-                _roads.Add(new Direction(n1, n2), r);
+                source.AddRoad(road);
+                destination.AddRoad(road);
             }
+
+            return road;
         }
-        public void ChangePosition(PointF oldPosition, PointF newPosition)
+        public void RemoveRoad(Segment segment)
         {
-            
+            if (_roads.ContainsKey(segment))
+            {
+                Road r = _roads[segment];
+                r.Source.RemoveRoad(r);
+                r.Destination.RemoveRoad(r);
+                Graph.Divide(_sections[r.Source], _sections[r.Destination]);
+                Graph.Divide(_sections[r.Destination], _sections[r.Source]);
+                _roads.Remove(segment);
+
+                if (r.Source.RelatedRoads.Count() == 0)
+                {
+                    _sections.Remove(r.Source);
+                }
+                if (r.Destination.RelatedRoads.Count() == 0)
+                {
+                    _sections.Remove(r.Destination);
+                }
+            }
         }
-        public void AddInterSection(Point position)
+        public void RemoveStreak(Line line)
         {
-            Section isec = new Section(null, null);
-            if (_nodes.ContainsKey(position))
+            if (_roads.ContainsValue(line.Road))
             {
-
+                switch (line.Streaks.Count)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        if (line.Road.Streaks == 1)
+                            RemoveRoad(GetSegment(line.Road));
+                        else
+                        {
+                            Graph.ChangeWeight(_sections[line.Source], _sections[line.Destination], float.PositiveInfinity);
+                            goto default;
+                        }
+                        break;
+                    default:
+                        line.RemoveStreak();
+                        break;
+                }
             }
-            else
+        }
+        public void ChangeWeight(Road road, float newWeight)
+        {
+            if (_roads.ContainsValue(road))
             {
-
+                Graph.ChangeWeight(_sections[road.Source], _sections[road.Destination], newWeight);
+                Graph.ChangeWeight(_sections[road.Destination], _sections[road.Source], newWeight);
             }
         }
 
-        private void setRoadMap(Graph graph, RoadMapParameters parameters)
+        private void setRoadMap(Graph graph)
         {
             if (graph != null)
                 Graph = graph;
             else
                 Graph = new Graph();
 
-            if (parameters != null)
-                RoadMapParametrs = parameters;
-            else
-                RoadMapParametrs = new RoadMapParameters();
-
-            VehicleController = new VehicleController(this);
+            RatioController = new RatioController(this, true);
         }
-        public RoadMap(Graph graph, RoadMapParameters parameters)
+        public RoadMap(Graph graph)
         {
-            setRoadMap(graph, parameters);
+            setRoadMap(graph);
         }
         public RoadMap()
         {
-            setRoadMap(null, null);
-        }
-
-        public void Step()
-        {
-
+            setRoadMap(null);
         }
     }
 }

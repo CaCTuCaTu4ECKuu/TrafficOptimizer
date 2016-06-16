@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TrafficOptimizer.RoadMap.Model
+namespace TrafficOptimizer.RoadMap2D
 {
     public class RoadMapParameters
     {
@@ -44,19 +44,14 @@ namespace TrafficOptimizer.RoadMap.Model
             get;
             set;
         }
-        /// <summary>
-        /// Смещение камеры относительно центра
-        /// </summary>
-        public PointF ViewOffset;
 
         public RoadMapParameters()
         {
-            DividingLineSize = 0.11f;
+            DividingLineSize = 0.1f;
             StreakSize = 5.0f;
 
             ViewScale = 0.005f;
             ViewScaleStep = 0.5f;
-            ViewOffset = new Point(0, 0);
         }
     }
 }

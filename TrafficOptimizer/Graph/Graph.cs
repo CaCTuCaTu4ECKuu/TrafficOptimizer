@@ -28,17 +28,6 @@ namespace TrafficOptimizer.Graph
         private Dictionary<Direction, Edge> _edges = new Dictionary<Direction, Edge>();
 
         #region Nodes & Edges
-        private delegate void NodeRemoveDelegate(Node n);
-        private event NodeRemoveDelegate OnNodeRemove;
-        private void RelatedEdgeClean(Node n, Edge e)
-        {
-            if (_edges.ContainsKey(e.Direction))
-            {
-                _edges.Remove(e.Direction);
-            }
-
-        }
-
         /// <summary>
         /// Добавляет узел в граф
         /// </summary>
@@ -46,59 +35,83 @@ namespace TrafficOptimizer.Graph
         public Node MakeNode()
         {
             Node n = new Node();
-            lock (_edges)
-            {
-                OnNodeRemove += n.UnsetEdge;
-                n.OnEdgeRemove += RelatedEdgeClean;
-                _nodes.Add(n);
-            }
+            _nodes.Add(n);
             return n;
         }
         public void RemoveNode(Node node)
         {
             lock (_edges)
             {
-                node.OnEdgeRemove -= RelatedEdgeClean;
-                OnNodeRemove -= node.UnsetEdge;
-
-                node.ClearEdges();
-                if (OnNodeRemove != null)
+                _nodes.Remove(node);
+                foreach (var e in GetRelatedTo(node))
                 {
-                    OnNodeRemove(node);
+                    _edges.Remove(e.Direction);
+                    e.Source.RelatedEdges.Remove(node);
+                }
+                foreach (var e in node.RelatedEdges.Values)
+                {
+                    _edges.Remove(e.Direction);
                 }
             }
         }
+
         public Edge Unite(Node src, Node dst, float weight)
         {
-            if (_nodes.Contains(src) && _nodes.Contains(dst))
+            lock (_edges)
             {
-                Direction d = new Direction(src, dst);
-                if (!_edges.ContainsKey(d))
+                if (_nodes.Contains(src) && _nodes.Contains(dst))
                 {
-                    Edge e = src.SetEdge(dst, weight);
-                    _edges.Add(d, e);
-                    return e;
+                    Direction d = new Direction(src, dst);
+                    if (!_edges.ContainsKey(d))
+                    {
+                        Edge e = new Edge(src, dst, weight);
+                        src.RelatedEdges.Add(dst, e);
+                        _edges.Add(d, e);
+                        return e;
+                    }
+                    else
+                        throw new Exception("Ребро уже существует");
                 }
                 else
-                    throw new Exception("Ребро уже существует");
+                    throw new Exception("В этом графе не существует одного из указанных узлов");
             }
-            else
-                throw new Exception("В этом графе не существует одного из указанных узлов");
+        }
+        private void clearDividing(Node n)
+        {
+            if (GetRelatedFrom(n).Count == 0 && GetRelatedTo(n).Count == 0)
+                _nodes.Remove(n);
         }
         public void Divide(Node src, Node dst)
         {
             if (_nodes.Contains(src) && _nodes.Contains(dst))
             {
-                Direction d = new Direction(src, dst);
-                if (_edges.ContainsKey(d))
+                lock (_edges)
                 {
-                    src.UnsetEdge(dst);
+                    Direction d = new Direction(src, dst);
+                    if (_edges.ContainsKey(d))
+                    {
+                        Edge e = _edges[d];
+                        _edges.Remove(d);
+                        src.RelatedEdges.Remove(dst);
+
+                        clearDividing(src);
+                        clearDividing(dst);
+                    }
+                    else
+                        throw new Exception("Такого ребра не существует");
                 }
-                else
-                    throw new Exception("Такого ребра не существует");
             }
             else
                 throw new Exception("В этом графе не существует одного из указанных узлов");
+        }
+
+        public void ChangeWeight(Node src, Node dst, float newWeight)
+        {
+            Edge e = GetEdge(new Direction(src, dst));
+            if (e != null)
+            {
+                e.Weight = newWeight;
+            }
         }
 
         public Edge GetEdge(Direction direction)
@@ -110,7 +123,7 @@ namespace TrafficOptimizer.Graph
         public List<Edge> GetRelatedFrom(Node src)
         {
             if (_nodes.Contains(src))
-                return src.RelatedEdges.Select(e => e.Value).ToList();
+                return src.RelatedEdges.Values.ToList();
             else
                 throw new Exception("В графе нет указанного узла");
         }

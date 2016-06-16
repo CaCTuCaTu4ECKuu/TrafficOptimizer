@@ -30,6 +30,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SharpGL, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph, Version=2.4.0.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpGL.2.4.0.0\lib\net40\SharpGL.SceneGraph.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -47,25 +55,39 @@
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Graph\Model\Node.cs" />
     <Compile Include="Graph\Model\Path.cs" />
-    <Compile Include="RoadMap\Model\Streak.cs" />
-    <Compile Include="RoadMap\Model\VehicleContainer.cs" />
+    <Compile Include="RoadMap2D\IDraw.cs" />
+    <Compile Include="RoadMap2D\RoadMap2D.cs" />
+    <Compile Include="RoadMap2D\Transport\Car.cs" />
+    <Compile Include="RoadMap2D\Transport\IVehicleDraw.cs" />
+    <Compile Include="RoadMap2D\Transport\PointCar.cs" />
+    <Compile Include="RoadMap2D\Transport\TrafficRegulation.cs" />
+    <Compile Include="RoadMap2D\VehiclesMap.cs" />
+    <Compile Include="RoadMap\Model\Segment.cs" />
     <Compile Include="RoadMap\Model\Line.cs" />
     <Compile Include="RoadMap\Model\Road.cs" />
     <Compile Include="RoadMap\Model\Section.cs" />
-    <Compile Include="RoadMap\Model\Vehicles\Car.cs" />
-    <Compile Include="RoadMap\Model\View2D\Line2D.cs" />
-    <Compile Include="RoadMap\Model\View2D\Road2D.cs" />
-    <Compile Include="RoadMap\RoadMap2D.cs" />
-    <Compile Include="RoadMap\Model\RoadMapParameters.cs" />
-    <Compile Include="RoadMap\Model\View2D\Streak2D.cs" />
+    <Compile Include="RoadMap2D\Model\Line2D.cs" />
+    <Compile Include="RoadMap2D\Model\Road2D.cs" />
+    <Compile Include="RoadMap2D\RoadMapParameters.cs" />
+    <Compile Include="RoadMap2D\Model\Streak2D.cs" />
+    <Compile Include="RoadMap\Model\Streak.cs" />
+    <Compile Include="RoadMap\Model\VehicleContainer.cs" />
+    <Compile Include="RoadMap\Model\Vehicles\VehiclePosition.cs" />
+    <Compile Include="RoadMap\RatioControls\IRatioController.cs" />
+    <Compile Include="RoadMap\RatioControls\MovementRatio.cs" />
+    <Compile Include="RoadMap\RatioControls\RatioController.cs" />
+    <Compile Include="RoadMap\RatioControls\RatioHistorySlot.cs" />
+    <Compile Include="RoadMap\RatioControls\StatisticDelegates.cs" />
     <Compile Include="RoadMap\RoadMap.cs" />
-    <Compile Include="RoadMap\Model\TrafficLight.cs" />
-    <Compile Include="RoadMap\Model\Vehicle.cs" />
+    <Compile Include="RoadMap\Model\Vehicles\Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoadMap\VehicleController.cs" />
+    <Compile Include="RoadMap\RatioController.cs" />
     <Compile Include="Tools\Tools.cs" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
