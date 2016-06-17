@@ -20,12 +20,12 @@ namespace TrafficOptimizer.Tools
             return (float)Math.Sqrt(Math.Pow((p2.X - p1.X), 2) + Math.Pow((p2.Y - p1.Y), 2));
         }
         /// <summary>
-        /// Находит точку на указанном расстоянии от прямой и под прямым углом к стартовой точке
+        /// Находит точку на указанном расстоянии от линии под прямым углом относительно стартовой точки
         /// </summary>
         /// <param name="height">Расстояние от точки до прямой</param>
-        /// <param name="side">С какой стороны искать точку (true - справа)</param>
+        /// <param name="side">Нарисовать линию справа (true) или слева (false)</param>
         /// <param name="SrcPoint">Точка, по отношению к которой угол будет прямым</param>
-        /// <param name="DstPoint">Точка, относительной котрой рассчитывается положение</param>
+        /// <param name="DstPoint">Точка конца заданной прямой</param>
         /// <returns></returns>
         public static PointF HeightPoint(float height, bool side, PointF SrcPoint, PointF DstPoint)
         {
@@ -63,6 +63,17 @@ namespace TrafficOptimizer.Tools
             var denom = ((B2.Y - B1.Y) * (A2.X - A1.X)) -
                 ((B2.X - B1.X) * (A2.Y - A1.Y));
             return denom != 0;
+        }
+        public static bool IsSegmentsOverlapping(float X1, float X2, float Y1, float Y2)
+        {
+            var min = Math.Min(Math.Min(X1, X2), Math.Min(Y1, Y2));
+            var max = Math.Max(Math.Max(X1, X2), Math.Max(Y1, Y2));
+            var d = Math.Abs(min - max);
+            var dx = Math.Abs(X1 - X2);
+            var dy = Math.Abs(Y1 - Y2);
+            if (dx == 0 || dy == 0)
+                return d == dx + dy;
+            return d < (dx + dy);
         }
         public static bool IsPointInside(PointF point, PointF[] block)
         {
