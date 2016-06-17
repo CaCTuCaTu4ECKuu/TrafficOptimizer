@@ -62,6 +62,7 @@
     <Compile Include="RoadMap2D\Transport\PointCar.cs" />
     <Compile Include="RoadMap2D\Transport\TrafficRegulation.cs" />
     <Compile Include="RoadMap2D\VehiclesMap.cs" />
+    <Compile Include="RoadMap\Model\Route.cs" />
     <Compile Include="RoadMap\Model\SectionLink.cs" />
     <Compile Include="RoadMap\Model\Segment.cs" />
     <Compile Include="RoadMap\Model\Line.cs" />
@@ -72,7 +73,7 @@
     <Compile Include="RoadMap2D\RoadMapParameters.cs" />
     <Compile Include="RoadMap2D\Model\Streak2D.cs" />
     <Compile Include="RoadMap\Model\Streak.cs" />
-    <Compile Include="RoadMap\Model\VehicleContainer.cs" />
+    <Compile Include="RoadMap\Model\Vehicles\VehicleContainer.cs" />
     <Compile Include="RoadMap\Model\Vehicles\VehiclePosition.cs" />
     <Compile Include="RoadMap\RatioControls\IRatioController.cs" />
     <Compile Include="RoadMap\RatioControls\MovementRatio.cs" />

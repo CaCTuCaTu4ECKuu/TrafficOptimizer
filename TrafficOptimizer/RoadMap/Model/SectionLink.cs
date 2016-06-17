@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
+    using Vehicles;
+
     public class SectionLink : VehicleContainer
     {
         /// <summary>
@@ -13,6 +15,15 @@ namespace TrafficOptimizer.RoadMap.Model
         /// Например для поворота направо - 0.75, а для поворота на дорогу слева - 1.25
         /// </summary>
         public Dictionary<VehicleContainer, float> _moveRatio = new Dictionary<VehicleContainer, float>();
+
+        public override float Length
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
         public SectionLink(VehicleContainer dst, float moveRatio) 
             : base(new VehicleContainer[] { dst })
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrafficOptimizer.RoadMap.Model.Vehicles;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
@@ -12,6 +13,10 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get;
             private set;
+        }
+        public override float Length
+        {
+            get { return Line.Length; }
         }
 
         public Streak(Line line, IEnumerable<Streak> destinations) 

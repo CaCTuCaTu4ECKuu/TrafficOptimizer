@@ -7,6 +7,8 @@ using TrafficOptimizer.RoadMap.Model;
 
 namespace TrafficOptimizer.RoadMap.RatioControls
 {
+    using Model.Vehicles;
+
     public abstract class RatioController : IRatioController
     {
         private RoadMap RoadMap

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TrafficOptimizer.RoadMap.RatioControls
 {
     using Model;
-
+    using Model.Vehicles;
     public interface IRatioController
     {
         /// <summary>

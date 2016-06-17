@@ -12,23 +12,7 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
             private set;
         }
 
-        public Section Destination
-        {
-            get;
-            set;
-        }
-        
         public float Length
-        {
-            get;
-            private set;
-        }
-        public VehiclePosition FrontPosition
-        {
-            get;
-            private set;
-        }
-        public VehiclePosition BackPosition
         {
             get;
             private set;
@@ -44,40 +28,67 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
             private set;
         }
 
-        public void Move(VehicleContainer container, float newPosition)
+        public Section Destination
         {
-            VehiclePosition pos = new VehiclePosition(container, newPosition);
-            if (FrontPosition == null)
-            {
-                // Проверять нет ли машины в указанном месте
-                if (true)
-                {
-                    FrontPosition = new VehiclePosition(container, newPosition);
-                }
-            }
-            else
-            {
-                if (FrontPosition != pos)
-                {
-                    BackPosition = FrontPosition;
-                    FrontPosition = pos;
-                    // TODO: еще там какие-то оповещения должны быть
-                }
-            }
+            get;
+            private set;
+        }
+        public Route Route
+        {
+            get;
+            private set;
+        }
+        public VehicleContainer DestinationAfter(VehicleContainer container)
+        {
+            if (Route != null)
+                return Route.DestinationAfter(container);
+            return null;
         }
 
-        public Vehicle(Section destination, float length, float maxSpeed, float maxAcceleration)
+        public VehiclePosition FrontPosition
+        {
+            get;
+            private set;
+        }
+        public VehiclePosition BackPosition
+        {
+            get;
+            private set;
+        }
+
+        public Vehicle(float length, float maxSpeed, float maxAcceleration)
         {
             ID = _instances++;
-
-            Destination = destination;
 
             Length = length;
             MaxSpeed = maxSpeed;
             MaxAcceleration = maxAcceleration;
 
+            Destination = null;
+            Route = null;
             FrontPosition = null;
             BackPosition = null;
+        }
+
+        public void SetDestination(Section destination, RoadMap map)
+        {
+            if (FrontPosition != null)
+            {
+                Destination = destination;
+                //TODO: Build route
+            }
+            else
+                throw new ApplicationException("Не установлено положение машины на дороге");
+        }
+        public void SetPosition(VehicleContainer container, float position)
+        {
+            if (container.IsSpaceFree(Route, 0, -Length))
+            {
+                FrontPosition = new VehiclePosition(container, 0);
+                BackPosition = new VehiclePosition(container, -Length);
+            }
+            else
+                throw new ApplicationException("Нельзя разместить машину в указанном месте. Недостаточно пространства");
         }
     }
 }

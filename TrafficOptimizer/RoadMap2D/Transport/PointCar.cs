@@ -20,8 +20,8 @@ namespace TrafficOptimizer.RoadMap2D.Transport
             set;
         }
 
-        public PointCar(Section destination, float radius, float maxSpeed, float maxAcceleration) 
-            : base(destination, 0, maxSpeed, maxAcceleration)
+        public PointCar(float radius, float maxSpeed, float maxAcceleration) 
+            : base(0, maxSpeed, maxAcceleration)
         {
             Radius = radius;
             Color = Color.Black;

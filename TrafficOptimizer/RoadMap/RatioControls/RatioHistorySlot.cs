@@ -3,6 +3,7 @@
 namespace TrafficOptimizer.RoadMap.RatioControls
 {
     using Model;
+    using Model.Vehicles;
 
     /// <summary>
     /// Ячейка, которая хранит информацию о полученном коффициенте, который рассчитывает после окончания движения

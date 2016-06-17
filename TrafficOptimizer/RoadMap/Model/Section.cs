@@ -7,6 +7,8 @@ using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
+    using Model.Vehicles;
+
     [DebuggerDisplay("[{ID}] In: {InRoads.Count()} Out: {OutRoads.Count()}")]
     public class Section : VehicleContainer
     {
@@ -43,6 +45,14 @@ namespace TrafficOptimizer.RoadMap.Model
                     _destinations = lines.SelectMany(l => l.Streaks).ToList<VehicleContainer>();
                 }
                 return _destinations;
+            }
+        }
+
+        public override float Length
+        {
+            get
+            {
+                return 0;
             }
         }
 

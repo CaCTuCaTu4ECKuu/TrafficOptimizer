@@ -24,8 +24,8 @@ namespace TrafficOptimizer.RoadMap2D.Transport
             set;
         }
 
-        public Car(Section destination, float maxSpeed, float maxAcceleration, float length, float width) 
-            : base(destination, length, maxSpeed, maxAcceleration)
+        public Car(float maxSpeed, float maxAcceleration, float length, float width) 
+            : base(length, maxSpeed, maxAcceleration)
         {
             Width = width;
         }
