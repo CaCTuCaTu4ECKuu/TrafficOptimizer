@@ -37,13 +37,13 @@ namespace TrafficOptimizer.Test.GraphTest
         /// Проверяет работу алгоритма
         /// </summary>
         [TestMethod]
-        public void PathIsCorrectTest1_1()
+        public void PathIsCorrectTest_SolidPathLengthCorrect()
         {
             var res = g.FindPath(nodes[0], nodes[3]);
             Assert.AreEqual(21D, res.Weight);
         }
         [TestMethod]
-        public void PathIsCorrectTest1_2()
+        public void PathIsCorrectTest_PathWithRestrickedEdgeCorrect()
         {
             // Запрещаем использовать одну из граней
             List<Edge> restricked = new List<Edge>();
@@ -52,7 +52,7 @@ namespace TrafficOptimizer.Test.GraphTest
             Assert.AreEqual(30D, res.Weight);
         }
         [TestMethod]
-        public void PathIsCorrectTest1_3()
+        public void PathIsCorrectTest_PathThroughDefinedNodesCorrect()
         {
             // Указываем список узлов, которые можно использовать
             List<Node> scope = new List<Node>();
@@ -63,7 +63,7 @@ namespace TrafficOptimizer.Test.GraphTest
             Assert.AreEqual(50D, res.Weight);
         }
         [TestMethod]
-        public void PathIsCorrectTest1_4()
+        public void PathIsCorrectTest_PathThroughDefinedNodesWithRestrickedEdgeCorrect()
         {
             // Указываем список узлов, которые можно использовать и запрещаем использовать одну из граней
             List<Node> scope = new List<Node>();

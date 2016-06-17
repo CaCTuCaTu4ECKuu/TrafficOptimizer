@@ -29,6 +29,69 @@ namespace TrafficOptimizerTest.ToolsTest
             Assert.IsFalse(Tools.IsLineIntersect(p1, p2, p3, p4));
         }
         [TestMethod]
+        public void LineIntersectionTest_SegmentsOnLineIntersectionCalculates()
+        {
+            PointF p1 = new PointF(0, 0);
+            PointF p2 = new PointF(0, 2);
+            PointF p3 = new PointF(0, 1);
+            PointF p4 = new PointF(0, 3);
+            Assert.IsFalse(Tools.IsLineIntersect(p1, p2, p3, p4));
+        }
+        [TestMethod]
+        public void LineIntersectionTest_SegmentsOnLineNoIntersectionCalculates()
+        {
+            PointF p1 = new PointF(0, 0);
+            PointF p2 = new PointF(0, 2);
+            PointF p3 = new PointF(0, 3);
+            PointF p4 = new PointF(0, 5);
+            Assert.IsFalse(Tools.IsLineIntersect(p1, p2, p3, p4));
+        }
+        [TestMethod]
+        public void SegmentsOverlappingTest_SegmentsOverlapCalculates()
+        {
+            float x1 = 0;
+            float x2 = 2;
+            float y1 = 1;
+            float y2 = 3;
+            Assert.IsTrue(Tools.IsSegmentsOverlapping(x1, x2, y1, y2));
+        }
+        [TestMethod]
+        public void SegmentsOverlappingTest_SegmentsNoOverlapCalculates()
+        {
+            float x1 = 0;
+            float x2 = 2;
+            float y1 = 3;
+            float y2 = 4;
+            Assert.IsFalse(Tools.IsSegmentsOverlapping(x1, x2, y1, y2));
+        }
+        [TestMethod]
+        public void SegmentOverlapTest_SegmentsAreSolidLineNoOverlapCalculates()
+        {
+            float x1 = 0;
+            float x2 = 2;
+            float y1 = 2;
+            float y2 = 4;
+            Assert.IsFalse(Tools.IsSegmentsOverlapping(x1, x2, y1, y2));
+        }
+        [TestMethod]
+        public void SegmentOverlapTest_PointOnSegmentOverlapCalculates()
+        {
+            float x1 = 0;
+            float x2 = 4;
+            float y1 = 2;
+            float y2 = 2;
+            Assert.IsTrue(Tools.IsSegmentsOverlapping(x1, x2, y1, y2));
+        }
+        [TestMethod]
+        public void SegmentOverlapTest_PointOutOfSegmentNoOverlapCalculates()
+        {
+            float x1 = 0;
+            float x2 = 4;
+            float y1 = -1;
+            float y2 = -1;
+            Assert.IsFalse(Tools.IsSegmentsOverlapping(x1, x2, y1, y2));
+        }
+        [TestMethod]
         public void PointInsideTest_PointInsideRectangleCalculates()
         {
             PointF[] block = new PointF[4];

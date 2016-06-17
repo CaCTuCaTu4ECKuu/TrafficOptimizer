@@ -14,7 +14,7 @@ namespace TrafficOptimizer.Test.GraphTest
         private List<Node> nodes;
 
         [TestMethod]
-        public void PathIsSolid()
+        public void PathTest_PathIsSolid()
         {
             Path p = g.FindPath(nodes[0], nodes[2]);
 

@@ -12,7 +12,7 @@ namespace TrafficOptimizerTest.RoadMapTest
     public class SegmentTest
     {
         [TestMethod]
-        public void SegmentEqualityTest1_1()
+        public void SegmentEqualityTest_InversedSegmentsAreEqual()
         {
             Section s1 = new Section(null);
             Section s2 = new Section(null);
@@ -22,7 +22,7 @@ namespace TrafficOptimizerTest.RoadMapTest
             Assert.AreEqual(sg1, sg2);
         }
         [TestMethod]
-        public void SegmentEqualityTest1_2()
+        public void SegmentEqualityTest_DifferentSegmentsAreNotEqual()
         {
             Section s1 = new Section(null);
             Section s2 = new Section(null);
@@ -33,20 +33,21 @@ namespace TrafficOptimizerTest.RoadMapTest
             Assert.AreNotEqual(sg1, sg2);
         }
         [TestMethod]
-        public void SegmentEqualityTest1_3()
+        public void SegmentEqualityTest_InversedSegmentsWithDifferentRoadsAreEqual()
         {
             Section s1 = new Section(null);
             Section s2 = new Section(null);
             Road r = new Road(null, s1, s2, null, null);
+            Road r2 = new Road(null, null, null, null, null);
             s1.AddRoad(r);
-            s2.AddRoad(r);
+            s2.AddRoad(r2);
             Segment sg1 = new Segment(s1, s2);
             Segment sg2 = new Segment(s2, s1);
 
             Assert.AreEqual(sg1, sg2);
         }
         [TestMethod]
-        public void SegmentEqualityTest1_4()
+        public void SegmentEqualityTest_DifferentInstancesOfSameSegmentSectionsAreEqual()
         {
             Section s1 = new Section(null);
             Section s2 = new Section(null);
@@ -56,7 +57,7 @@ namespace TrafficOptimizerTest.RoadMapTest
             Assert.AreEqual(sg1, sg2);
         }
         [TestMethod]
-        public void SegmentEqualityTest1_5()
+        public void SegmentEqualityTest_ListAssignInversedSegmentsAsEqual()
         {
             List<Segment> list = new List<Segment>();
             Section s1 = new Section(null);
@@ -68,7 +69,7 @@ namespace TrafficOptimizerTest.RoadMapTest
             Assert.IsTrue(list.Contains(sg2));
         }
         [TestMethod]
-        public void SegmentEqualityTest1_6()
+        public void SegmentEqualityTest_ListDoNotAssignDifferentSegmentAsAnother()
         {
             List<Segment> list = new List<Segment>();
             Section s1 = new Section(null);
