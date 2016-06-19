@@ -10,52 +10,27 @@ namespace TrafficOptimizer.RoadMap.Model
 
     public class SectionLink : VehicleContainer
     {
-        /// <summary>
-        /// Коэффициент на перемещение к пути по отношению к движению по прямой
-        /// Например для поворота направо - 0.75, а для поворота на дорогу слева - 1.25
-        /// </summary>
-        public Dictionary<VehicleContainer, float> _moveRatio = new Dictionary<VehicleContainer, float>();
-
+        private float _length;
         public override float Length
         {
             get
             {
-                return 0;
+                return _length;
             }
         }
 
-        public SectionLink(VehicleContainer dst, float moveRatio) 
-            : base(new VehicleContainer[] { dst })
+        public override IEnumerable<VehicleContainer> Destinations
         {
-            _moveRatio.Add(dst, moveRatio);
-        }
-
-        public float MoveRatio(VehicleContainer dst)
-        {
-            if (_moveRatio.ContainsKey(dst))
+            get
             {
-                return _moveRatio[dst];
+                return _destinations;
             }
-            throw new InvalidOperationException("Нет такого пути");
         }
 
-        public void AddDestination(VehicleContainer dst, float ratio)
+        public SectionLink(VehicleContainer destination, float moveRatio, float lenght)
+            : base(destination, moveRatio)
         {
-            if (!_destinations.Contains(dst))
-            {
-                _destinations.Add(dst);
-                _moveRatio.Add(dst, ratio);
-            }
-        }
-        public new void RemoveDestination(VehicleContainer dst)
-        {
-            _destinations.Remove(dst);
-            _moveRatio.Remove(dst);
-        }
-        [Obsolete("Use another method", true)]
-        public new void AddDestination(VehicleContainer dst)
-        {
-            throw new InvalidOperationException("Вызов этого метода для данного класса запрещен");
+            _length = lenght;
         }
     }
 }

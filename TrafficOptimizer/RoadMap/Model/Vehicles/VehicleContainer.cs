@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace TrafficOptimizer.RoadMap.Model.Vehicles
@@ -18,9 +19,12 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
 
         protected List<VehicleContainer> _destinations = new List<VehicleContainer>();
         protected List<Vehicle> _vehicles = new List<Vehicle>();
-        public virtual IEnumerable<VehicleContainer> Destinations
+        /// <summary>
+        /// Пути, к которым можно добратся из данного контейнера
+        /// </summary>
+        public abstract IEnumerable<VehicleContainer> Destinations
         {
-            get { return _destinations.AsReadOnly(); }
+            get;
         }
         public virtual IEnumerable<Vehicle> Vehicles
         {
@@ -30,16 +34,64 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
         {
             get;
         }
-        public bool IsLeadsTo(VehicleContainer dest)
+        /// <summary>
+        /// Коэффициент, определяющий замедление скорости преодоления относительно прямолинейного движения
+        /// </summary>
+        public float MoveRatio
         {
-            return _destinations.Contains(dest);
+            get;
+            private set;
         }
 
-        public VehicleContainer(IEnumerable<VehicleContainer> destinations)
+        /// <summary>
+        /// Разрешен ли путь от этого контейнера к указанному
+        /// </summary>
+        /// <param name="dest">Место назначения</param>
+        /// <returns></returns>
+        public virtual bool AllowToMove(VehicleContainer src, VehicleContainer dst)
+        {
+            return (src == this || src.Destinations.Contains(this)) && this.Destinations.Contains(dst);
+        }
+
+        private void setContainer(IEnumerable<VehicleContainer> destinations, float moveRatio)
         {
             ID = _instances++;
+            MoveRatio = moveRatio;
+
             if (destinations != null)
                 _destinations.AddRange(destinations);
+
+            OnVehicleEnter += VehicleContainer_OnVehicleEnter;
+            OnVehicleLeave += VehicleContainer_OnVehicleLeave;
+
+        }
+        public VehicleContainer(IEnumerable<VehicleContainer> destinations, float moveRatio = 1.0f)
+        {
+            setContainer(destinations, moveRatio);
+        }
+        public VehicleContainer(VehicleContainer destination, float moveRatio = 1.0f)
+        {
+            setContainer(new VehicleContainer[] { destination }, moveRatio);
+        }
+
+        private void VehicleContainer_OnVehicleLeave(VehicleContainer container, Vehicle vehicle)
+        {
+            if (container == this)
+            {
+                _vehicles.Remove(vehicle);
+            }
+            else
+                throw new ApplicationException("Ну чё бля за ху кто трогал код?");
+        }
+
+        private void VehicleContainer_OnVehicleEnter(VehicleContainer container, Vehicle vehicle)
+        {
+            if (container == this)
+            {
+                _vehicles.Add(vehicle);
+            }
+            else
+                throw new ApplicationException("НЕТ БЛЯ, сюда ток машину, которая вьехала");
         }
 
         public virtual void AddDestination(VehicleContainer dst)
@@ -55,29 +107,30 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
         public event VehicleMoveDelegate OnVehicleEnter;
         public event VehicleMoveDelegate OnVehicleLeave;
 
-        public bool IsSpaceFree(object Route,float front, float back)
+        public bool IsSpaceFree(float front, float back)
         {
             foreach (Vehicle v in _vehicles)
             {
+                if (v.Length > Length)
+                    return false;
                 float vFront = v.FrontPosition.Container == this ? v.FrontPosition.Position : Length + v.FrontPosition.Position;
-                float vBack = vFront = v.Length;
+                float vBack = vFront - v.Length;
                 if (Tools.IsSegmentsOverlapping(front, back, vFront, vBack))
                     return false;
             }
             return true;
         }
-        public void Move(Vehicle vehicle)
-        {
-            if (_vehicles.Contains(vehicle))
-            {
 
-            }
-            else if (vehicle.FrontPosition.Container.IsLeadsTo(this))
+        public void SetVehicle(Vehicle vehicle)
+        {
+            if (vehicle.FrontPosition == null)
             {
-                
+                vehicle.SetPosition(this, 0);
             }
             else
-                throw new ArgumentException("Расположение машины ведет к этому контейнеру");
+            {
+                _vehicles.Add(vehicle);
+            }
         }
     }
 }

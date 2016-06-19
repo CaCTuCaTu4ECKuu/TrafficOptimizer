@@ -92,13 +92,10 @@ namespace TrafficOptimizer.RoadMap2D
         }
         public void RemoveStreak(Section src, Section dst)
         {
+            RoadMap.RemoveStreak(src, dst);
             Road r = GetRoad(src, dst);
             if (r != null)
             {
-                if (r.Source == src)
-                    RoadMap.RemoveStreak(r.PrimaryLine);
-                else
-                    RoadMap.RemoveStreak(r.SlaveLine);
                 if (r.Streaks > 0)
                 {
                     var last = _roadsPosition[r];

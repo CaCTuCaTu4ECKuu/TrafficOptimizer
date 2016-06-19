@@ -24,5 +24,13 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             Line = line;
         }
+
+        public override IEnumerable<VehicleContainer> Destinations
+        {
+            get
+            {
+                return _destinations;
+            }
+        }
     }
 }

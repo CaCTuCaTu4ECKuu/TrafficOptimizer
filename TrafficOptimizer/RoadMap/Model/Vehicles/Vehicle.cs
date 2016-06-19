@@ -28,6 +28,17 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
             private set;
         }
 
+        public float Speed
+        {
+            get;
+            set;
+        }
+        public float Acceleration
+        {
+            get;
+            set;
+        }
+
         public Section Destination
         {
             get;
@@ -82,13 +93,19 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
         }
         public void SetPosition(VehicleContainer container, float position)
         {
-            if (container.IsSpaceFree(Route, 0, -Length))
+            if (FrontPosition == null)
             {
-                FrontPosition = new VehiclePosition(container, 0);
-                BackPosition = new VehiclePosition(container, -Length);
+                if (container.IsSpaceFree(0, -Length))
+                {
+                    FrontPosition = new VehiclePosition(container, 0);
+                    BackPosition = new VehiclePosition(container, -Length);
+                    container.SetVehicle(this);
+                }
+                else
+                    throw new ApplicationException("Нельзя разместить машину в указанном месте. Недостаточно пространства");
             }
             else
-                throw new ApplicationException("Нельзя разместить машину в указанном месте. Недостаточно пространства");
+                throw new ApplicationException("Машина уже размещена на дороге");
         }
     }
 }

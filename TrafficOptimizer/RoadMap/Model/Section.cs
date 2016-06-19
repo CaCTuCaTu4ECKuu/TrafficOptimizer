@@ -7,12 +7,15 @@ using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    using Model.Vehicles;
+    using Vehicles;
 
     [DebuggerDisplay("[{ID}] In: {InRoads.Count()} Out: {OutRoads.Count()}")]
     public class Section : VehicleContainer
     {
         private List<Road> _relatedRoads;
+        /// <summary>
+        /// Все дороги, которые проходят через эту секцию
+        /// </summary>
         public IEnumerable<Road> RelatedRoads
         {
             get
@@ -20,6 +23,9 @@ namespace TrafficOptimizer.RoadMap.Model
                 return _relatedRoads.AsReadOnly();
             }
         }
+        /// <summary>
+        /// Дороги, которые идут к данной секции
+        /// </summary>
         public IEnumerable<Road> InRoads
         {
             get
@@ -27,6 +33,9 @@ namespace TrafficOptimizer.RoadMap.Model
                 return _relatedRoads.Where(r => r.PrimaryLine.Destination == this);
             }
         }
+        /// <summary>
+        /// Дороги, идущие от данной секции
+        /// </summary>
         public IEnumerable<Road> OutRoads
         {
             get
@@ -42,7 +51,8 @@ namespace TrafficOptimizer.RoadMap.Model
                 if (_destinations == null)
                 {
                     var lines = InRoads.Select(x => x.SlaveLine).Union(OutRoads.Select(x => x.PrimaryLine));
-                    _destinations = lines.SelectMany(l => l.Streaks).ToList<VehicleContainer>();
+                    _destinations = lines.SelectMany(s => s.Streaks).Cast<VehicleContainer>()
+                        .Union(lines.Select(l => l.Destination).Cast<VehicleContainer>()).Distinct().ToList();
                 }
                 return _destinations;
             }
@@ -56,34 +66,45 @@ namespace TrafficOptimizer.RoadMap.Model
             }
         }
 
-        private Dictionary<VehicleContainer, SectionLink> _links = new Dictionary<VehicleContainer, SectionLink>();
+        private Dictionary<StreaksLink, VehicleContainer> _links 
+            = new Dictionary<StreaksLink, VehicleContainer>();
 
-        public bool AllowToMove(VehicleContainer src,  VehicleContainer dst)
+        /// <summary>
+        /// Можно ли проехать к месту назначения из источника через этот узел
+        /// </summary>
+        /// <param name="src">Начало</param>
+        /// <param name="dst">Место назначения</param>
+        public override bool AllowToMove(VehicleContainer src,  VehicleContainer dst)
         {
-            return Destinations.Contains(dst) && _links.ContainsKey(src) && _links[src].IsLeadsTo(dst);
+            // Только если указаны 2 streak-а нужно проверять есть ли между ними связь
+            bool linked = true;
+            if (src.GetType() == typeof(Streak) && dst.GetType() == typeof(Streak))
+                return _links.ContainsKey(new StreaksLink((Streak)src, (Streak)dst));
+            return base.AllowToMove(src, dst) && linked;
         }
-
 
         public Section(IEnumerable<Road> relatedRoads)
-            : base(null)
+            : base((VehicleContainer)null)
         {
             _relatedRoads = new List<Road>();
-            if (relatedRoads != null)
-                _relatedRoads.AddRange(relatedRoads);
-            resetDestination();
+            foreach (var r in relatedRoads)
+                AddRoad(r);
+            RoadChanged(null, null);
         }
 
-        private void resetDestination()
+        private void RoadChanged(Road road, Line line)
         {
             _destinations = null;
         }
-
         public void AddRoad(Road road)
         {
             if (!_relatedRoads.Contains(road))
             {
                 _relatedRoads.Add(road);
-                resetDestination();
+                road.PrimaryLine.OnStreakAdd += RoadChanged;
+                road.PrimaryLine.OnStreakRemove += RoadChanged;
+                road.SlaveLine.OnStreakAdd += RoadChanged;
+                road.SlaveLine.OnStreakRemove += RoadChanged;
             }
         }
         public void RemoveRoad(Road road)
@@ -91,28 +112,33 @@ namespace TrafficOptimizer.RoadMap.Model
             if (_relatedRoads.Contains(road))
             {
                 _relatedRoads.Remove(road);
-                resetDestination();
+                road.PrimaryLine.OnStreakAdd -= RoadChanged;
+                road.PrimaryLine.OnStreakRemove -= RoadChanged;
+                road.SlaveLine.OnStreakAdd -= RoadChanged;
+                road.SlaveLine.OnStreakRemove -= RoadChanged;
             }
         }
-        public void Link(VehicleContainer src, VehicleContainer dst, float moveRatio = 1f)
+
+        public void Link(Streak src, Streak dst, float moveRatio = 1f)
         {
             if (Destinations.Contains(dst))
             {
-                if (!_links.ContainsKey(src))
-                    _links.Add(src, new SectionLink(dst, moveRatio));
+                if (src.Destinations.Contains(this) && this.Destinations.Contains(dst))
+                {
+                    StreaksLink link = new StreaksLink(src, dst);
+                    if (!_links.ContainsKey(link))
+                        _links.Add(link, new SectionLink(dst, moveRatio, 0));
+                    RoadChanged(null, null);
+                }
                 else
-                    _links[src].AddDestination(dst, moveRatio);
+                    throw new ApplicationException("Одна из дорог не связана с этой секцией");
             }
         }
-        public void Unlink(VehicleContainer src, VehicleContainer dst)
+        public void Unlink(Streak src, Streak dst)
         {
-            if (_links.ContainsKey(src) && _links[src].IsLeadsTo(dst))
-            {
-                if (_links[src].Destinations.Count() == 1)
-                    _links.Remove(src);
-                else
-                    _links[src].RemoveDestination(dst);
-            }
+            StreaksLink link = new StreaksLink(src, dst);
+            _links.Remove(link);
+            RoadChanged(null, null);
         }
     }
 }

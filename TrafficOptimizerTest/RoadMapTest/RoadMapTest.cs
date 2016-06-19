@@ -59,8 +59,8 @@ namespace TrafficOptimizerTest.RoadMapTest
             Segment sg = new Segment(s[0], s[1]);
             var road = map.GetRoad(sg);
 
-            map.RemoveStreak(road.PrimaryLine);
-            map.RemoveStreak(road.SlaveLine);
+            map.RemoveStreak(s[0], s[1]);
+            road.SlaveLine.RemoveStreak();
             Assert.IsNull(map.GetRoad(sg));
         }
         [TestMethod]
@@ -74,7 +74,7 @@ namespace TrafficOptimizerTest.RoadMapTest
             var node = map.GetNode(s[0]);
             var road = map.GetRoad(sg);
 
-            map.RemoveStreak(road.PrimaryLine);
+            map.RemoveStreak(s[1], s[0]);
             Assert.IsNotNull(map.GetSection(node));
         }
     }

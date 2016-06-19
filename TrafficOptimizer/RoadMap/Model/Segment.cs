@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
     [DebuggerDisplay("[{_sites.Key.ID}:{_sites.Value.ID}]-[{_sites.Value.ID}:{_sites.Key.ID}]")]
-    public class Segment : IEquatable<Segment>
+    public struct Segment : IEquatable<Segment>
     {
         private KeyValuePair<Section, Section> _sites;
 
@@ -32,11 +29,10 @@ namespace TrafficOptimizer.RoadMap.Model
             if (obj == null)
                 return false;
 
-            Segment o = obj as Segment;
-            if (o == null)
+            if (obj.GetType() != typeof(Segment))
                 return false;
 
-            return Equals(o);
+            return Equals((Segment)obj);
         }
         public override int GetHashCode()
         {

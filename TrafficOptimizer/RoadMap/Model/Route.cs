@@ -15,8 +15,8 @@ namespace TrafficOptimizer.RoadMap.Model
             get;
             private set;
         }
-        private List<Route> _history;
-        private List<VehicleContainer> _path;
+        private List<Route> _history = null;
+        private List<VehicleContainer> _path = null;
         public IEnumerable<VehicleContainer> Path
         {
             get { return _path.AsReadOnly(); }
@@ -41,6 +41,10 @@ namespace TrafficOptimizer.RoadMap.Model
             else if (_path.Contains(target))
             {
                 return _path[_path.IndexOf(target) + 1];
+            }
+            else if (false)
+            {
+
             }
             else
                 return null;

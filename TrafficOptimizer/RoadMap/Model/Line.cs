@@ -10,6 +10,8 @@ namespace TrafficOptimizer.RoadMap.Model
 {
     using Graph.Model;
 
+    public delegate void RoadLineChangedDelegate(Road road, Line line);
+
     [DebuggerDisplay("[{Road.ID}] {Source.ID} -> {Destination.ID}")]
     public class Line
     {
@@ -49,6 +51,9 @@ namespace TrafficOptimizer.RoadMap.Model
             get { return Edge.Weight; }
         }
 
+        public event RoadLineChangedDelegate OnStreakAdd;
+        public event RoadLineChangedDelegate OnStreakRemove;
+
         private List<Streak> _streaks;
         public IEnumerable<Streak> Streaks
         {
@@ -64,6 +69,8 @@ namespace TrafficOptimizer.RoadMap.Model
                 last.AddDestination(newStreak);
             }
             _streaks.Add(newStreak);
+            if (OnStreakAdd != null)
+                OnStreakAdd(Road, this);
         }
         public void RemoveStreak()
         {
@@ -76,6 +83,8 @@ namespace TrafficOptimizer.RoadMap.Model
                     preLast.RemoveDestination(last);
                 }
                 _streaks.Remove(last);
+                if (OnStreakRemove != null)
+                    OnStreakRemove(Road, this);
             }
         }
 
