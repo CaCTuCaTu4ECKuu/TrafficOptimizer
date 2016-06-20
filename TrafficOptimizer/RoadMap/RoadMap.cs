@@ -44,6 +44,10 @@ namespace TrafficOptimizer.RoadMap
                 return _roads[segment];
             return null;
         }
+        public Road GetRoad(Section s1, Section s2)
+        {
+            return GetRoad(new Segment(s1, s2));
+        }
         public Section GetSection(Node node)
         {
             if (node != null)

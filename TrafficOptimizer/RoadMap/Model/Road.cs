@@ -66,6 +66,10 @@ namespace TrafficOptimizer.RoadMap.Model
                 return PrimaryLine.Streaks.Count() + SlaveLine.Streaks.Count();
             }
         }
+        public float Length
+        {
+            get { return PrimaryLine.Length; }
+        }
 
         public Road(RoadMap roadMap, Section source, Section destination, Edge primary, Edge slave)
         {

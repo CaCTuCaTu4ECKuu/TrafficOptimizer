@@ -27,7 +27,7 @@ namespace TrafficOptimizer.RoadMap.Model
             }
         }
 
-        public SectionLink(VehicleContainer destination, float moveRatio, float lenght)
+        public SectionLink(Streak destination, float moveRatio, float lenght)
             : base(destination, moveRatio)
         {
             _length = lenght;

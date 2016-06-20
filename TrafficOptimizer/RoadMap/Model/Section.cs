@@ -12,6 +12,11 @@ namespace TrafficOptimizer.RoadMap.Model
     [DebuggerDisplay("[{ID}] In: {InRoads.Count()} Out: {OutRoads.Count()}")]
     public class Section : VehicleContainer
     {
+        public RoadMap RoadMap
+        {
+            get;
+            private set;
+        }
         private List<Road> _relatedRoads;
         /// <summary>
         /// Все дороги, которые проходят через эту секцию
@@ -44,6 +49,9 @@ namespace TrafficOptimizer.RoadMap.Model
             }
         }
 
+        /// <summary>
+        /// Полосы и секции, в которые можно попасть из этой секции
+        /// </summary>
         public override IEnumerable<VehicleContainer> Destinations
         {
             get
@@ -65,6 +73,14 @@ namespace TrafficOptimizer.RoadMap.Model
                 return 0;
             }
         }
+        public float LengthTo(Section target)
+        {
+            if (_destinations.Contains(target))
+            {
+                return RoadMap.GetRoad(this, target).Length;
+            }
+            return float.PositiveInfinity;
+        }
 
         private Dictionary<StreaksLink, VehicleContainer> _links 
             = new Dictionary<StreaksLink, VehicleContainer>();
@@ -83,9 +99,10 @@ namespace TrafficOptimizer.RoadMap.Model
             return base.AllowToMove(src, dst) && linked;
         }
 
-        public Section(IEnumerable<Road> relatedRoads)
+        public Section(RoadMap map, IEnumerable<Road> relatedRoads)
             : base((VehicleContainer)null)
         {
+            RoadMap = map;
             _relatedRoads = new List<Road>();
             foreach (var r in relatedRoads)
                 AddRoad(r);
@@ -119,7 +136,7 @@ namespace TrafficOptimizer.RoadMap.Model
             }
         }
 
-        public void Link(Streak src, Streak dst, float moveRatio = 1f)
+        public void Link(Streak src, Streak dst, float length = 0, float moveRatio = 1f)
         {
             if (Destinations.Contains(dst))
             {
@@ -127,7 +144,7 @@ namespace TrafficOptimizer.RoadMap.Model
                 {
                     StreaksLink link = new StreaksLink(src, dst);
                     if (!_links.ContainsKey(link))
-                        _links.Add(link, new SectionLink(dst, moveRatio, 0));
+                        _links.Add(link, new SectionLink(dst, moveRatio, length));
                     RoadChanged(null, null);
                 }
                 else
@@ -141,4 +158,5 @@ namespace TrafficOptimizer.RoadMap.Model
             RoadChanged(null, null);
         }
     }
+    // TODO: Добавить Enumerator для Links чтобы можно было смотреть связи по индексу
 }
