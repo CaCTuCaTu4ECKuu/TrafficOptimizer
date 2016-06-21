@@ -21,12 +21,12 @@ namespace TrafficOptimizer.RoadMap
         }
         public DateTime SimulationTime;
 
-        public MovementRatio MovementRatio
+        public RatioCollection MovementRatio
         {
             get;
             private set;
         }
-        public List<IRatioController> RatioFactors
+        public List<IRatioCollection> RatioFactors
         {
             get;
             private set;
@@ -39,6 +39,7 @@ namespace TrafficOptimizer.RoadMap
         }
 
         #region Statistics
+        /*
         /// <summary>
         /// Начал движение
         /// </summary>
@@ -63,19 +64,20 @@ namespace TrafficOptimizer.RoadMap
         /// Закончил движения
         /// </summary>
         public event VehicleContainerDelegate Vehicle_EndMovement;
+        */
         #endregion
 
         public RatioController(RoadMap map, bool useMovementRatio)
         {
             RoadMap = map;
             SimulationTime = DateTime.Now.Date;
-            RatioFactors = new List<IRatioController>();
+            RatioFactors = new List<IRatioCollection>();
             UseMovementRatio = useMovementRatio;
 
-            var mr = new MovementRatio(map, 100);
-            MovementRatio = mr;
-            Vehicle_EnterLine += mr.Vehicle_OnEnterLine;
-            Vehicle_LeaveLine += mr.Vehicle_LeaveLine;
+            //var mr = new MovementRatioCollection(map, 100);
+            //MovementRatio = mr;
+            //Vehicle_EnterLine += mr.Vehicle_OnEnterLine;
+            //Vehicle_LeaveLine += mr.Vehicle_LeaveLine;
         }
     }
 }

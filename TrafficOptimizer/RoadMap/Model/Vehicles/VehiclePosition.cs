@@ -12,7 +12,7 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
         public float Position
         {
             get;
-            set;
+            private set;
         }
 
         public VehiclePosition(VehicleContainer container, float position)

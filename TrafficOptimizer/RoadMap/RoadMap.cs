@@ -61,7 +61,6 @@ namespace TrafficOptimizer.RoadMap
         public event SectionChangedDelegate OnSectionAdd;
         public event SectionChangedDelegate OnSectionRemove;
 
-
         public Graph Graph
         {
             get;
@@ -76,7 +75,7 @@ namespace TrafficOptimizer.RoadMap
         public Section MakeSection()
         {
             Node n = Graph.MakeNode();
-            Section s = new Section(null);
+            Section s = new Section(this,null);
             _sections.Add(s, n);
             return s;
         }

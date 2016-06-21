@@ -14,8 +14,8 @@ namespace TrafficOptimizerTest.RoadMapTest
         [TestMethod]
         public void SegmentEqualityTest_InversedSegmentsAreEqual()
         {
-            Section s1 = new Section(null);
-            Section s2 = new Section(null);
+            Section s1 = new Section(null, null);
+            Section s2 = new Section(null, null);
             Segment sg1 = new Segment(s1, s2);
             Segment sg2 = new Segment(s2, s1);
 
@@ -24,9 +24,9 @@ namespace TrafficOptimizerTest.RoadMapTest
         [TestMethod]
         public void SegmentEqualityTest_DifferentSegmentsAreNotEqual()
         {
-            Section s1 = new Section(null);
-            Section s2 = new Section(null);
-            Section s3 = new Section(null);
+            Section s1 = new Section(null, null);
+            Section s2 = new Section(null, null);
+            Section s3 = new Section(null, null);
             Segment sg1 = new Segment(s1, s2);
             Segment sg2 = new Segment(s1, s3);
 
@@ -35,8 +35,8 @@ namespace TrafficOptimizerTest.RoadMapTest
         [TestMethod]
         public void SegmentEqualityTest_InversedSegmentsWithDifferentRoadsAreEqual()
         {
-            Section s1 = new Section(null);
-            Section s2 = new Section(null);
+            Section s1 = new Section(null, null);
+            Section s2 = new Section(null, null);
             Road r = new Road(null, s1, s2, null, null);
             Road r2 = new Road(null, null, null, null, null);
             s1.AddRoad(r);
@@ -49,8 +49,8 @@ namespace TrafficOptimizerTest.RoadMapTest
         [TestMethod]
         public void SegmentEqualityTest_DifferentInstancesOfSameSegmentSectionsAreEqual()
         {
-            Section s1 = new Section(null);
-            Section s2 = new Section(null);
+            Section s1 = new Section(null, null);
+            Section s2 = new Section(null, null);
             Segment sg1 = new Segment(s1, s2);
             Segment sg2 = new Segment(s1, s2);
 
@@ -60,8 +60,8 @@ namespace TrafficOptimizerTest.RoadMapTest
         public void SegmentEqualityTest_ListAssignInversedSegmentsAsEqual()
         {
             List<Segment> list = new List<Segment>();
-            Section s1 = new Section(null);
-            Section s2 = new Section(null);
+            Section s1 = new Section(null, null);
+            Section s2 = new Section(null, null);
             Segment sg1 = new Segment(s1, s2);
             Segment sg2 = new Segment(s2, s1);
             list.Add(sg1);
@@ -72,9 +72,9 @@ namespace TrafficOptimizerTest.RoadMapTest
         public void SegmentEqualityTest_ListDoNotAssignDifferentSegmentAsAnother()
         {
             List<Segment> list = new List<Segment>();
-            Section s1 = new Section(null);
-            Section s2 = new Section(null);
-            Section s3 = new Section(null);
+            Section s1 = new Section(null, null);
+            Section s2 = new Section(null, null);
+            Section s3 = new Section(null, null);
             Segment sg1 = new Segment(s1, s2);
             Segment sg2 = new Segment(s2, s1);
             Segment sg3 = new Segment(s2, s3);

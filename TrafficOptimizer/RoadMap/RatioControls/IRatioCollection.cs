@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.RatioControls
 {
-    using Model;
     using Model.Vehicles;
-    public interface IRatioController
+
+    public interface IRatioCollection
     {
         /// <summary>
         /// Получает коэффициенты для дороги до указанного момента времени (времени моделирования)
         /// </summary>
-        /// <param name="moment">Модельное время</param>
+        /// <param name="moment">Время моделирования, на которое необходимо получить коэффициенты</param>
         /// <returns></returns>
-        Dictionary<VehicleContainer, float> GetGlobalRatio(DateTime moment, List<VehicleContainer> subjects);
+        Dictionary<VehicleContainer, float> GetRatioCollection(DateTime moment, List<VehicleContainer> subjects);
     }
 }

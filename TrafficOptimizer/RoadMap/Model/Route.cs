@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    using Model.Vehicles;
+    using Vehicles;
+    using RatioControls;
 
     public class Route
     {
@@ -97,13 +98,13 @@ namespace TrafficOptimizer.RoadMap.Model
             Destination = destination;
         }
         /// <summary>
-        /// Строит или перестраивает маршрут от до указанной секции
+        /// Строит или перестраивает маршрут до указанной секции
         /// </summary>
         /// <param name="source"></param>
-        public void BuildRoute(Section source)
+        public void BuildRoute(RatioCollection ratio, Section source)
         {
             var map = source.RoadMap;
-            var path = map.Graph.FindPath(map.GetNode(source), map.GetNode(Destination));
+            var path = map.Graph.FindPath(null, map.GetNode(source), map.GetNode(Destination));
             if (path.IsSolid)
             {
                 _path = new List<Section>();

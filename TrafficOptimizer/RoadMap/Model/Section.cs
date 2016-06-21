@@ -104,8 +104,11 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             RoadMap = map;
             _relatedRoads = new List<Road>();
-            foreach (var r in relatedRoads)
-                AddRoad(r);
+            if (relatedRoads != null)
+            {
+                foreach (var r in relatedRoads)
+                    AddRoad(r);
+            }
             RoadChanged(null, null);
         }
 
