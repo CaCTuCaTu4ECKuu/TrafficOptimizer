@@ -15,7 +15,7 @@ namespace TrafficOptimizer.Graph.Utils
         /// <param name="edges">Ребра, которые можно использовать для построения маршрута</param>
         /// <param name="task">Направление, которое необходимо найти</param>
         /// <returns>Маршрут</returns>
-        public static Path FindShortestPath(RatioCollection ratio, List<Node> searchScope, Dictionary<Direction, Edge> edges, Direction task)
+        public static Path FindShortestPath(GraphRatioCollection ratio, List<Node> searchScope, Dictionary<Direction, Edge> edges, Direction task)
         {
             if (ratio == null)
                 throw new ArgumentException("Ratio value can't be null");

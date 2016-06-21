@@ -55,7 +55,7 @@
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Graph\Model\Node.cs" />
     <Compile Include="Graph\Model\Path.cs" />
-    <Compile Include="Graph\RatioCollection.cs" />
+    <Compile Include="Graph\GraphRatioCollection.cs" />
     <Compile Include="RoadMap2D\IDraw.cs" />
     <Compile Include="RoadMap2D\RoadMap2D.cs" />
     <Compile Include="RoadMap2D\Transport\Car.cs" />

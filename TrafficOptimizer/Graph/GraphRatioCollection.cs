@@ -8,7 +8,7 @@ namespace TrafficOptimizer.Graph
 {
     using Model;
 
-    public class RatioCollection
+    public class GraphRatioCollection
     {
         public Graph BaseGraph
         {
@@ -17,7 +17,7 @@ namespace TrafficOptimizer.Graph
         }
         private Dictionary<Edge, float> _factors = new Dictionary<Edge, float>();
 
-        public RatioCollection(Graph graph)
+        public GraphRatioCollection(Graph graph)
         {
             BaseGraph = graph;
         }
@@ -41,11 +41,11 @@ namespace TrafficOptimizer.Graph
                 _factors.Add(edge, ratio);
         }
 
-        public RatioCollection MultipleRatio(RatioCollection r_graph)
+        public GraphRatioCollection MultipleRatio(GraphRatioCollection r_graph)
         {
             if (r_graph.BaseGraph == BaseGraph)
             {
-                RatioCollection res = new RatioCollection(BaseGraph);
+                GraphRatioCollection res = new GraphRatioCollection(BaseGraph);
                 foreach (var e in _factors)
                 {
                     res.SetRatio(e.Key, e.Value * r_graph.GetRatio(e.Key));

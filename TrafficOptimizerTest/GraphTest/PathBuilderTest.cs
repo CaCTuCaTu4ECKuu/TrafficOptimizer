@@ -13,7 +13,7 @@ namespace TrafficOptimizer.Test.GraphTest
         private Graph g;
         private List<Node> nodes;
         private List<Edge> edges;
-        private RatioCollection ratio;
+        private GraphRatioCollection ratio;
 
         public PathBuilderTest()
         {
@@ -22,7 +22,7 @@ namespace TrafficOptimizer.Test.GraphTest
             edges = new List<Edge>();
 
             g = new Graph();
-            ratio = new RatioCollection(g);
+            ratio = new GraphRatioCollection(g);
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());

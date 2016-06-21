@@ -128,21 +128,21 @@ namespace TrafficOptimizer.Graph
         #endregion
 
         #region Pathes
-        public Path FindPath(RatioCollection ratio, Node src, Node dst)
+        public Path FindPath(GraphRatioCollection ratio, Node src, Node dst)
         {
             return PathBuilder.FindShortestPath(ratio, _nodes, _edges, new Direction(src, dst));
         }
-        public Path FindPath(RatioCollection ratio, Node src, Node dst, List<Edge> restricked)
+        public Path FindPath(GraphRatioCollection ratio, Node src, Node dst, List<Edge> restricked)
         {
             Dictionary<Direction, Edge> allowedEdges = _edges.Where(e => !restricked.Contains(e.Value)).ToDictionary(e => e.Key, e => e.Value);
             return PathBuilder.FindShortestPath(ratio, _nodes, allowedEdges, new Direction(src, dst));
 
         }
-        public Path FindPath(RatioCollection ratio, List<Node> scope, Node src, Node dst)
+        public Path FindPath(GraphRatioCollection ratio, List<Node> scope, Node src, Node dst)
         {
             return PathBuilder.FindShortestPath(ratio, scope, _edges, new Direction(src, dst));
         }
-        public Path FindPath(RatioCollection ratio, List<Node> scope, Node src, Node dst, List<Edge> restricked)
+        public Path FindPath(GraphRatioCollection ratio, List<Node> scope, Node src, Node dst, List<Edge> restricked)
         {
             if (scope.Contains(src) && scope.Contains(dst))
             {

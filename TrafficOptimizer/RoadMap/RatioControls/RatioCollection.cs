@@ -11,13 +11,55 @@ namespace TrafficOptimizer.RoadMap.RatioControls
 
     public class RatioCollection : IRatioCollection
     {
+        private class RatioPair
+        {
+            private float _ratioSum = 0;
+            private bool dropped = false;
+            private int _samples = 0;
+            public float RatioSum
+            {
+                get { return _ratioSum; }
+                set
+                {
+                    if (value >= float.MaxValue)
+                    {
+                        dropped = true;
+                        _ratioSum /= 2;
+                        _samples /= 2;
+                    }
+                    else
+                        _ratioSum = value;
+                }
+            }
+            public int SampleSize
+            {
+                get { return _samples; }
+                set
+                {
+                    if (dropped)
+                        dropped = false;
+                    else
+                        _samples = value;
+                }
+            }
+            public float Average
+            {
+                get { return RatioSum / SampleSize; }
+            }
+            public RatioPair(float ratio, int samples)
+            {
+                RatioSum = ratio;
+                SampleSize = samples;
+            }
+        }
+
         private RoadMap RoadMap
         {
             get;
             set;
         }
 
-        private Dictionary<VehicleContainer, float> _average;
+        private Dictionary<VehicleContainer, RatioPair> _average;
         private List<RatioHistorySlot> _history;
 
         private int _collectionSize = 100000;
@@ -112,7 +154,7 @@ namespace TrafficOptimizer.RoadMap.RatioControls
         public RatioCollection(RoadMap map, int sampleSize = 100)
         {
             RoadMap = map;
-            _average = new Dictionary<VehicleContainer, float>();
+            _average = new Dictionary<VehicleContainer, RatioPair>();
             _history = new List<RatioHistorySlot>();
             _sampleSize = sampleSize;
 
@@ -124,20 +166,57 @@ namespace TrafficOptimizer.RoadMap.RatioControls
         /// Добавить новое значение коэффициента для участка на определенный момент
         /// </summary>
         /// <param name="container">Контейнер, для которого записывается значение</param>
-        /// <param name="value">Значение коэффициента</param>
+        /// <param name="ratio">Значение коэффициента</param>
         /// <param name="moment">Момент времени</param>
-        public void UpdateFactor(VehicleContainer container, float value, DateTime moment)
+        public void UpdateRatio(VehicleContainer container, float ratio, DateTime moment)
         {
             if (!_average.ContainsKey(container))
-                _average.Add(container, value);
+                _average.Add(container, new RatioPair(ratio, 1));
             else
-                _average[container] = (_average[container] + value) / 2;
-            _history.Insert(0, new RatioHistorySlot(container, value, moment));
+            {
+                _average[container].RatioSum += ratio;
+                _average[container].SampleSize++;
+            }
+            _history.Insert(0, new RatioHistorySlot(container, ratio, moment));
 
             if (_history.Count > _collectionSize)
                 _history.RemoveAt(_history.Count - 1);
         }
 
+        private float calcInfluence(float ratio)
+        {
+            float affectedValue = 1.0f - ratio;
+            if (ratio > 1.0f)
+                return 1.0f - (affectedValue * CollectionInfluenceRatio);
+            else
+                return 1.0f + (affectedValue * CollectionInfluenceRatio);
+        }
+        public float GetRatio(DateTime moment, VehicleContainer container)
+        {
+            float currentRatio = 1.0f;
+            if (_average.ContainsKey(container))
+            {
+
+                DateTime from = moment - InfluenceTime;
+                // Выборка области не более размера space в промежутке между указанным моментом и моментом за timeInfluence времени до него
+                var scope = _history.Where(s => s.Moment >= from && s.Moment <= moment).Take(_sampleSize);
+                if (scope.Count() >= _influenceAmount)
+                {
+                    float scopeAverage = 0;
+                    foreach (var e in scope)
+                        scopeAverage += e.Value;
+                    scopeAverage = scopeAverage / scope.Count();
+
+                    currentRatio = calcInfluence(scopeAverage / _average[container].Average);
+                }
+                else
+                    currentRatio = calcInfluence(_average[container].Average);
+
+                if (currentRatio < 1.0f && !AllowNegativeRatio)
+                    currentRatio = 1.0f;
+            }
+            return currentRatio;
+        }
         /// <summary>
         /// Получить набор коэффициентов
         /// </summary>
@@ -152,35 +231,7 @@ namespace TrafficOptimizer.RoadMap.RatioControls
             Dictionary<VehicleContainer, float> res = new Dictionary<VehicleContainer, float>();
             foreach (var c in subjects)
             {
-                if (_average.ContainsKey(c))
-                {
-                    DateTime from = moment - InfluenceTime;
-                    // Выборка области не более размера space в промежутке между указанным моментом и моментом за timeInfluence времени до него
-                    var scope = _history.Where(s => s.Moment >= from && s.Moment <= moment).Take(_sampleSize);
-                    if (scope.Count() >= _influenceAmount)
-                    {
-                        float scopeAverage = 0;
-                        foreach (var e in scope)
-                            scopeAverage += e.Value;
-                        scopeAverage = scopeAverage / scope.Count();
-
-                        float currentRatio = scopeAverage / _average[c];
-                        // TODO: Учесть коффициент влияния на коллекцию правильно
-                        if (currentRatio < 1f)
-                        {
-                            if (AllowNegativeRatio)
-                                res.Add(c, currentRatio);
-                            else
-                                res.Add(c, 1f);
-                        }
-                        else
-                            res.Add(c, currentRatio);
-                    }
-                    else
-                        res.Add(c, 1f);
-                }
-                else
-                    res.Add(c, 1f);
+                res.Add(c, GetRatio(moment, c));
             }
             return res;
         }
@@ -192,7 +243,33 @@ namespace TrafficOptimizer.RoadMap.RatioControls
         /// <returns></returns>
         public float GetAverage(VehicleContainer container)
         {
-            return _average[container];
+            return _average[container].Average;
+        }
+        /// <summary>
+        /// Задает значение среднего коэффициента для контейнера
+        /// </summary>
+        /// <param name="container">Контейнер</param>
+        /// <param name="ratioSum">Сумма коэффициентов</param>
+        /// <param name="ratioSum">Количество измерений коэффициентов</param>
+        public void SetAverage(VehicleContainer container, float ratioSum, int samples)
+        {
+            if (!_average.ContainsKey(container))
+                _average.Add(container, new RatioPair(ratioSum, samples));
+            else
+            {
+                if (_average[container].RatioSum + ratioSum < float.MaxValue)
+                {
+                    _average[container].RatioSum += ratioSum;
+                    _average[container].SampleSize += samples;
+                }
+                else
+                {
+                    // Если не рассчитать отлельно количество не засчитается (после сброса первое обновление размера не засчитывается)
+                    float newAvg = (_average[container].RatioSum / 2) + (ratioSum / 2);
+                    int newSize = (_average[container].SampleSize / 2) + (samples / 2);
+                    SetAverage(container, newAvg, newSize);
+                }
+            }
         }
 
         /// <summary>

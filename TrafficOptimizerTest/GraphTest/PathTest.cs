@@ -11,7 +11,7 @@ namespace TrafficOptimizer.Test.GraphTest
     public class PathTest
     {
         private Graph g;
-        private RatioCollection ratio;
+        private GraphRatioCollection ratio;
         private List<Node> nodes;
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace TrafficOptimizer.Test.GraphTest
         {
             nodes = new List<Node>();
             g = new Graph();
-            ratio = new RatioCollection(g);
+            ratio = new GraphRatioCollection(g);
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
