@@ -13,6 +13,7 @@ namespace TrafficOptimizer.Test.GraphTest
         private Graph g;
         private List<Node> nodes;
         private List<Edge> edges;
+        private RatioCollection ratio;
 
         public PathBuilderTest()
         {
@@ -21,6 +22,7 @@ namespace TrafficOptimizer.Test.GraphTest
             edges = new List<Edge>();
 
             g = new Graph();
+            ratio = new RatioCollection(g);
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
@@ -39,7 +41,7 @@ namespace TrafficOptimizer.Test.GraphTest
         [TestMethod]
         public void PathIsCorrectTest_SolidPathLengthCorrect()
         {
-            var res = g.FindPath(nodes[0], nodes[3]);
+            var res = g.FindPath(ratio, nodes[0], nodes[3]);
             Assert.AreEqual(21D, res.Weight);
         }
         [TestMethod]
@@ -48,7 +50,7 @@ namespace TrafficOptimizer.Test.GraphTest
             // Запрещаем использовать одну из граней
             List<Edge> restricked = new List<Edge>();
             restricked.Add(edges[5]);
-            var res = g.FindPath(nodes[0], nodes[3], restricked);
+            var res = g.FindPath(ratio, nodes[0], nodes[3], restricked);
             Assert.AreEqual(30D, res.Weight);
         }
         [TestMethod]
@@ -59,7 +61,7 @@ namespace TrafficOptimizer.Test.GraphTest
             scope.Add(nodes[0]);
             scope.Add(nodes[2]);
             scope.Add(nodes[3]);
-            var res = g.FindPath(scope, nodes[0], nodes[3]);
+            var res = g.FindPath(ratio, scope, nodes[0], nodes[3]);
             Assert.AreEqual(50D, res.Weight);
         }
         [TestMethod]
@@ -72,7 +74,7 @@ namespace TrafficOptimizer.Test.GraphTest
             scope.Add(nodes[3]);
             List<Edge> restricked = new List<Edge>();
             restricked.Add(edges[2]);
-            var res = g.FindPath(scope, nodes[0], nodes[3], restricked);
+            var res = g.FindPath(ratio, scope, nodes[0], nodes[3], restricked);
             Assert.AreEqual(52D, res.Weight);
         }
     }

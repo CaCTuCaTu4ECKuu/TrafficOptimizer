@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace TrafficOptimizer.Graph
+namespace TrafficOptimizer.Graph.Utils
 {
     using Model;
 
@@ -9,12 +10,16 @@ namespace TrafficOptimizer.Graph
         /// <summary>
         /// Находит кратчайший маршрут между указанными узлами
         /// </summary>
+        /// <param name="ratio">Коллекция коэффициентов для веса ребер графа, может иметь значение null</param>
         /// <param name="searchScope">Список узлов, которые учавствуют в маршруте</param>
         /// <param name="edges">Ребра, которые можно использовать для построения маршрута</param>
         /// <param name="task">Направление, которое необходимо найти</param>
         /// <returns>Маршрут</returns>
-        public static Path FindShortestPath(List<Node> searchScope, Dictionary<Direction, Edge> edges, Direction task)
+        public static Path FindShortestPath(RatioCollection ratio, List<Node> searchScope, Dictionary<Direction, Edge> edges, Direction task)
         {
+            if (ratio == null)
+                throw new ArgumentException("Ratio value can't be null");
+
             Path res = null;
 
             List<Node> notVisited = new List<Node>(searchScope);
@@ -60,7 +65,7 @@ namespace TrafficOptimizer.Graph
                     if (edges.ContainsKey(td))
                     {
                         // Запоминаем вес путь до этого узла
-                        var currPrice = track[recent].Price + edges[td].Weight;
+                        var currPrice = track[recent].Price + edges[td].Weight * ratio.GetRatio(edges[td]);
                         var nextNode = e.Key;
                         if (!track.ContainsKey(nextNode) || track[nextNode].Price > currPrice)
                         {

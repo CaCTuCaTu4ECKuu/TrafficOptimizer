@@ -10,16 +10,6 @@ namespace TrafficOptimizer.Graph.Model
     [Serializable]
     public class Edge
     {
-        private static uint _instances = 0;
-        /// <summary>
-        /// Идентификатор ребра
-        /// </summary>
-        public uint ID
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// Направление грани
         /// </summary>
@@ -61,7 +51,6 @@ namespace TrafficOptimizer.Graph.Model
         {
             Direction = new Direction(src, dst);
             Weight = weight;
-            ID = _instances++;
         }
     }
 }

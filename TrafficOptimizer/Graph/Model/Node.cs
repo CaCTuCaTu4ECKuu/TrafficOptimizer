@@ -13,15 +13,6 @@ namespace TrafficOptimizer.Graph.Model
     [Serializable]
     public class Node
     {
-        private static uint _instances = 0;
-        /// <summary>
-        /// Идентификатор узла
-        /// </summary>
-        public uint ID
-        {
-            get; private set;
-        }
-
         public event EdgeRemoveDelegate OnEdgeRemove;
 
         /// <summary>
@@ -56,11 +47,6 @@ namespace TrafficOptimizer.Graph.Model
         public bool IsRelateTo(Node dst)
         {
             return RelatedEdges.ContainsKey(dst);
-        }
-
-        public Node()
-        {
-            ID = _instances++;
         }
     }
 }

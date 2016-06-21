@@ -6,6 +6,7 @@ using System.Diagnostics;
 namespace TrafficOptimizer.Graph
 {
     using Model;
+    using Utils;
 
     /// <summary>
     /// Граф
@@ -14,16 +15,6 @@ namespace TrafficOptimizer.Graph
     [Serializable]
     public class Graph
     {
-        private static uint _instances = 0;
-        /// <summary>
-        /// Идентификатор графа
-        /// </summary>
-        public uint ID
-        {
-            get;
-            private set;
-        }
-
         private List<Node> _nodes = new List<Node>();
         private Dictionary<Direction, Edge> _edges = new Dictionary<Direction, Edge>();
 
@@ -137,46 +128,31 @@ namespace TrafficOptimizer.Graph
         #endregion
 
         #region Pathes
-        public Path FindPath(Node src, Node dst)
+        public Path FindPath(RatioCollection ratio, Node src, Node dst)
         {
-            return PathBuilder.FindShortestPath(_nodes, _edges, new Direction(src, dst));
+            return PathBuilder.FindShortestPath(ratio, _nodes, _edges, new Direction(src, dst));
         }
-        public Path FindPath(Node src, Node dst, List<Edge> restricked)
+        public Path FindPath(RatioCollection ratio, Node src, Node dst, List<Edge> restricked)
         {
             Dictionary<Direction, Edge> allowedEdges = _edges.Where(e => !restricked.Contains(e.Value)).ToDictionary(e => e.Key, e => e.Value);
-            return PathBuilder.FindShortestPath(_nodes, allowedEdges, new Direction(src, dst));
+            return PathBuilder.FindShortestPath(ratio, _nodes, allowedEdges, new Direction(src, dst));
 
         }
-        public Path FindPath(List<Node> scope, Node src, Node dst)
+        public Path FindPath(RatioCollection ratio, List<Node> scope, Node src, Node dst)
         {
-            return PathBuilder.FindShortestPath(scope, _edges, new Direction(src, dst));
+            return PathBuilder.FindShortestPath(ratio, scope, _edges, new Direction(src, dst));
         }
-        public Path FindPath(List<Node> scope, Node src, Node dst, List<Edge> restricked)
+        public Path FindPath(RatioCollection ratio, List<Node> scope, Node src, Node dst, List<Edge> restricked)
         {
             if (scope.Contains(src) && scope.Contains(dst))
             {
                 var allow = _edges.Where(e => scope.Contains(e.Key.Source) && scope.Contains(e.Key.Destination));
                 Dictionary<Direction, Edge> allowedEdges = allow.Where(e => !restricked.Contains(e.Value)).ToDictionary(e => e.Key, e => e.Value);
-                return PathBuilder.FindShortestPath(_nodes, allowedEdges, new Direction(src, dst));
+                return PathBuilder.FindShortestPath(ratio, _nodes, allowedEdges, new Direction(src, dst));
             }
             else
                 throw new ArgumentException("Начало или конец вне зоны поиска");
         }
         #endregion
-
-        public Edge this[Direction direction]
-        {
-            get
-            {
-                if (_edges.ContainsKey(direction))
-                    return _edges[direction];
-                return null;
-            }
-        }
-
-        public Graph()
-        {
-            ID = _instances++;
-        }
     }
 }

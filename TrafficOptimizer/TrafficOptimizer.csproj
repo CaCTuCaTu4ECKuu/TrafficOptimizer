@@ -49,12 +49,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Graph\PathBuilder.cs" />
+    <Compile Include="Graph\Utils\PathBuilder.cs" />
     <Compile Include="Graph\Model\Direction.cs" />
     <Compile Include="Graph\Model\Edge.cs" />
     <Compile Include="Graph\Graph.cs" />
     <Compile Include="Graph\Model\Node.cs" />
     <Compile Include="Graph\Model\Path.cs" />
+    <Compile Include="Graph\RatioCollection.cs" />
     <Compile Include="RoadMap2D\IDraw.cs" />
     <Compile Include="RoadMap2D\RoadMap2D.cs" />
     <Compile Include="RoadMap2D\Transport\Car.cs" />
@@ -76,11 +77,8 @@
     <Compile Include="RoadMap\Model\Streak.cs" />
     <Compile Include="RoadMap\Model\Vehicles\VehicleContainer.cs" />
     <Compile Include="RoadMap\Model\Vehicles\VehiclePosition.cs" />
-    <Compile Include="RoadMap\RatioControls\IRatioController.cs" />
-    <Compile Include="RoadMap\RatioControls\MovementRatio.cs" />
-    <Compile Include="RoadMap\RatioControls\RatioController.cs" />
-    <Compile Include="RoadMap\RatioControls\RatioHistorySlot.cs" />
-    <Compile Include="RoadMap\RatioControls\StatisticDelegates.cs" />
+    <Compile Include="RoadMap\RatioControls\IRatioCollection.cs" />
+    <Compile Include="RoadMap\RatioControls\RatioCollection.cs" />
     <Compile Include="RoadMap\RoadMap.cs" />
     <Compile Include="RoadMap\Model\Vehicles\Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

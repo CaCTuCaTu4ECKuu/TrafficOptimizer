@@ -11,12 +11,13 @@ namespace TrafficOptimizer.Test.GraphTest
     public class PathTest
     {
         private Graph g;
+        private RatioCollection ratio;
         private List<Node> nodes;
 
         [TestMethod]
         public void PathTest_PathIsSolid()
         {
-            Path p = g.FindPath(nodes[0], nodes[2]);
+            Path p = g.FindPath(ratio, nodes[0], nodes[2]);
 
             Assert.IsTrue(p.IsSolid);
         }
@@ -25,6 +26,7 @@ namespace TrafficOptimizer.Test.GraphTest
         {
             nodes = new List<Node>();
             g = new Graph();
+            ratio = new RatioCollection(g);
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
             nodes.Add(g.MakeNode());
