@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace TrafficOptimizer.Graph.Model
 {
-    [DebuggerDisplay("[{Source.ID} => {Destination.ID}] - {Nodes.Count} ({Weight})")]
+    [DebuggerDisplay("[{Source.GetHashCode()}=>{Destination.GetHashCode()}] - {Nodes.Count} ({Weight})")]
     [Serializable]
     public class Path : IEnumerable<Edge>
     {

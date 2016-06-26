@@ -8,8 +8,10 @@ using TrafficOptimizer.RoadMap.Model;
 namespace TrafficOptimizer.RoadMap.RatioControls
 {
     using Model.Vehicles;
+    using Graph;
+    using Graph.Model;
 
-    public class RatioCollection : IRatioCollection
+    public class RatioCollection : IRatioCollection, IRatioProvider
     {
         private class RatioPair
         {
@@ -167,8 +169,8 @@ namespace TrafficOptimizer.RoadMap.RatioControls
         /// </summary>
         /// <param name="container">Контейнер, для которого записывается значение</param>
         /// <param name="ratio">Значение коэффициента</param>
-        /// <param name="moment">Момент времени</param>
-        public void UpdateRatio(VehicleContainer container, float ratio, DateTime moment)
+        /// <param name="simulationMoment">Момент времени</param>
+        public void UpdateRatio(VehicleContainer container, float ratio, TimeSpan simulationMoment)
         {
             if (!_average.ContainsKey(container))
                 _average.Add(container, new RatioPair(ratio, 1));
@@ -177,7 +179,7 @@ namespace TrafficOptimizer.RoadMap.RatioControls
                 _average[container].RatioSum += ratio;
                 _average[container].SampleSize++;
             }
-            _history.Insert(0, new RatioHistorySlot(container, ratio, moment));
+            _history.Insert(0, new RatioHistorySlot(container, ratio, simulationMoment));
 
             if (_history.Count > _collectionSize)
                 _history.RemoveAt(_history.Count - 1);
@@ -191,15 +193,14 @@ namespace TrafficOptimizer.RoadMap.RatioControls
             else
                 return 1.0f + (affectedValue * CollectionInfluenceRatio);
         }
-        public float GetRatio(DateTime moment, VehicleContainer container)
+        public float GetRatio(VehicleContainer container, TimeSpan moment)
         {
             float currentRatio = 1.0f;
             if (_average.ContainsKey(container))
             {
-
-                DateTime from = moment - InfluenceTime;
+                TimeSpan from = moment - InfluenceTime;
                 // Выборка области не более размера space в промежутке между указанным моментом и моментом за timeInfluence времени до него
-                var scope = _history.Where(s => s.Moment >= from && s.Moment <= moment).Take(_sampleSize);
+                var scope = _history.Where(s => s.SimulationMoment >= from && s.SimulationMoment <= moment).Take(_sampleSize);
                 if (scope.Count() >= _influenceAmount)
                 {
                     float scopeAverage = 0;
@@ -223,7 +224,7 @@ namespace TrafficOptimizer.RoadMap.RatioControls
         /// <param name="moment">Момент времени на который нужны коэффициенты</param>
         /// <param name="subjects">Список контейнеров, для которых нужны коэффициенты</param>
         /// <returns></returns>
-        public Dictionary<VehicleContainer, float> GetRatioCollection(DateTime moment, List<VehicleContainer> subjects)
+        public Dictionary<VehicleContainer, float> GetRatioCollection(List<VehicleContainer> subjects, TimeSpan? moment = null)
         {
             if (subjects == null || subjects.Count == 0)
                 throw new ArgumentException("В subjects должны быть указаны контейнеры, для которых нужно получить коэффициенты");
@@ -231,7 +232,7 @@ namespace TrafficOptimizer.RoadMap.RatioControls
             Dictionary<VehicleContainer, float> res = new Dictionary<VehicleContainer, float>();
             foreach (var c in subjects)
             {
-                res.Add(c, GetRatio(moment, c));
+                res.Add(c, GetRatio(c, moment.HasValue ? moment.Value : RoadMap.SimulationTime));
             }
             return res;
         }
@@ -272,6 +273,26 @@ namespace TrafficOptimizer.RoadMap.RatioControls
             }
         }
 
+        public float GetRatio(Edge edge)
+        {
+            // TODO : MAKE IT RIGHT
+            foreach (var e in _average)
+            {
+                var etype = e.GetType();
+                if (etype == typeof(Streak))
+                {
+                    if (((Streak)e.Key).Line.Edge == edge)
+                        return GetRatio(((Streak)e.Key).Line.Edge);
+                }
+                if (etype == typeof(SectionLink))
+                {
+                    if (((SectionLink)e.Key).Edge == edge)
+                        return GetRatio(((SectionLink)e.Key).Edge);
+                }
+            }
+            return 1.0f;
+        }
+
         /// <summary>
         /// Ячейка, которая хранит информацию о полученном коффициенте, который рассчитывает после окончания движения
         /// </summary>
@@ -296,7 +317,7 @@ namespace TrafficOptimizer.RoadMap.RatioControls
             /// <summary>
             /// Время записи значения
             /// </summary>
-            public DateTime Moment
+            public TimeSpan SimulationMoment
             {
                 get;
                 private set;
@@ -308,11 +329,11 @@ namespace TrafficOptimizer.RoadMap.RatioControls
             /// <param name="container">Контейнер</param>
             /// <param name="value">Значение коэффициента</param>
             /// <param name="moment">Время получения коэффициента</param>
-            public RatioHistorySlot(VehicleContainer container, float value, DateTime moment)
+            public RatioHistorySlot(VehicleContainer container, float value, TimeSpan moment)
             {
                 Container = container;
                 Value = value;
-                Moment = moment;
+                SimulationMoment = moment;
             }
         }
     }

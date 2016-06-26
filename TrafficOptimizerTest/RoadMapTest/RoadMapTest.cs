@@ -12,10 +12,10 @@ namespace TrafficOptimizerTest.RoadMapTest
         public RoadMap getMap(out Section[] s, out Road[] r)
         {
             RoadMap map = new RoadMap();
-            var s1 = map.MakeSection();
-            var s2 = map.MakeSection();
-            var s3 = map.MakeSection();
-            var s4 = map.MakeSection();
+            var s1 = map.MakeSection(null);
+            var s2 = map.MakeSection(null);
+            var s3 = map.MakeSection(null);
+            var s4 = map.MakeSection(null);
             var r1 = map.SetRoad(s1, s2, 1);
             var r2 = map.SetRoad(s2, s3, 1);
             var r3 = map.SetRoad(s3, s4, 1);
@@ -43,7 +43,7 @@ namespace TrafficOptimizerTest.RoadMapTest
             Road[] r;
             RoadMap map = getMap(out s, out r);
 
-            var node = map.GetNode(s[0]);
+            var node = s[0].Source;
 
             Segment sg = new Segment(s[0], s[1]);
             map.RemoveRoad(sg);
@@ -71,7 +71,7 @@ namespace TrafficOptimizerTest.RoadMapTest
             RoadMap map = getMap(out s, out r);
 
             Segment sg = new Segment(s[0], s[1]);
-            var node = map.GetNode(s[0]);
+            var node = s[0].Drain;
             var road = map.GetRoad(sg);
 
             map.RemoveStreak(s[1], s[0]);

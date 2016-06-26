@@ -6,29 +6,31 @@ using System.Threading.Tasks;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
-    /// <summary>
-    /// Описывает связь входящей полосы движения с исходящей в секции
-    /// </summary>
-    public struct StreaksLink : IEquatable<StreaksLink>
+    public struct LinePair : IEquatable<LinePair>
     {
-        public Streak Source
+        public Line Source
         {
             get;
-            set;
+            private set;
         }
-        public Streak Destination
+        public Line Destination
         {
             get;
-            set;
+            private set;
         }
 
-        public StreaksLink(Streak src, Streak dst)
+        public LinePair(Line src, Line dst)
         {
-            Source = src;
-            Destination = dst;
+            if (src.Road.RoadMap == dst.Road.RoadMap)
+            {
+                Source = src;
+                Destination = dst;
+            }
+            else
+                throw new NotImplementedException("Полосы от разных карт");
         }
 
-        public bool Equals(StreaksLink other)
+        public bool Equals(LinePair other)
         {
             return Source == other.Source && Destination == other.Destination;
         }
@@ -37,10 +39,10 @@ namespace TrafficOptimizer.RoadMap.Model
             if (obj == null)
                 return false;
 
-            if (obj.GetType() != typeof(StreaksLink))
+            if (obj.GetType() != typeof(LinePair))
                 return false;
 
-            return Equals((StreaksLink)obj);
+            return Equals((LinePair)obj);
         }
         public override int GetHashCode()
         {

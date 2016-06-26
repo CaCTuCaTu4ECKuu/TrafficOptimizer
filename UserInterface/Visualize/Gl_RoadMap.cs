@@ -62,6 +62,7 @@ namespace UserInterface.Visualize
             gl.LoadIdentity();
             gl.Translate(0, 0, -2);
 
+            /*
             gl.Begin(OpenGL.GL_LINES);
             gl.Color(0.5f, 0.5f, 0.5f);
 
@@ -75,6 +76,7 @@ namespace UserInterface.Visualize
             gl.Vertex(-1, 0);
 
             gl.End();
+            */
 
             gl.Scale(0.005f, 0.005f, 0.005f);
             RoadMap.Draw();

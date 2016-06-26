@@ -9,7 +9,7 @@ namespace TrafficOptimizer.Graph.Model
     /// <summary>
     /// Узел графа
     /// </summary>
-    [DebuggerDisplay("[{ID}] - [{RelatedEdges.Count}]")]
+    [DebuggerDisplay("{GetHashCode()}: {RelatedEdges.Count}")]
     [Serializable]
     public class Node
     {

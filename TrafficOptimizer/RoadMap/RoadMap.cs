@@ -15,8 +15,14 @@ namespace TrafficOptimizer.RoadMap
 
     public class RoadMap
     {
-        protected Dictionary<Section, Node> _sections = new Dictionary<Section, Node>();
+        protected List<Section> _sections = new List<Section>();
         protected Dictionary<Segment, Road> _roads = new Dictionary<Segment, Road>();
+
+        public TimeSpan SimulationTime
+        {
+            get;
+            private set;
+        }
 
         public IEnumerable<Road> Roads
         {
@@ -26,10 +32,17 @@ namespace TrafficOptimizer.RoadMap
             }
         }
 
-        public Node GetNode(Section section)
+        public Section GetSection(Node node)
         {
-            if (section != null && _sections.ContainsKey(section))
-                return _sections[section];
+            if (Graph.NodeExists(node))
+            {
+                foreach (Section s in _sections)
+                {
+                    // Ищем в какой секции есть этот узел (может быть только в одной)
+                    if (s.ContainedNodes.Contains(node))
+                        return s;
+                }
+            }
             return null;
         }
         public Segment GetSegment(Road road)
@@ -47,12 +60,6 @@ namespace TrafficOptimizer.RoadMap
         public Road GetRoad(Section s1, Section s2)
         {
             return GetRoad(new Segment(s1, s2));
-        }
-        public Section GetSection(Node node)
-        {
-            if (node != null)
-                return _sections.Where(n => n.Value == node).Select(e => e.Key).FirstOrDefault();
-            return null;
         }
 
         public event RoadChangedDelegate OnRoadAdd;
@@ -72,11 +79,16 @@ namespace TrafficOptimizer.RoadMap
             private set;
         }
 
-        public Section MakeSection()
+        public Section MakeSection(IEnumerable<Road> roads = null)
         {
-            Node n = Graph.MakeNode();
-            Section s = new Section(this,null);
-            _sections.Add(s, n);
+            Node src = Graph.MakeNode();
+            Node drn = Graph.MakeNode();
+            Section s = new Section(this, src, drn, roads);
+            _sections.Add(s);
+
+            if (OnSectionAdd != null)
+                OnSectionAdd(s);
+
             return s;
         }
         public Road SetRoad(Section source, Section destination, float weight)
@@ -89,39 +101,34 @@ namespace TrafficOptimizer.RoadMap
                 if (road.PrimaryLine.Source == source)
                 {
                     // Мы добавляем основную дорогу
-                    if (road.PrimaryLine.Streaks.Count() == 0)
-                        Graph.ChangeWeight(_sections[road.Source], _sections[road.Destination], weight);
                     road.PrimaryLine.AddStreak();
                 }
                 else
                 {
                     // Мы добавляем встречную
-                    if (road.SlaveLine.Streaks.Count() == 0)
-                        Graph.ChangeWeight(_sections[road.Destination], _sections[road.Source], weight);
                     road.SlaveLine.AddStreak();
                 }
             }
             else
             {
-                Edge e1 = Graph.Unite(_sections[source], _sections[destination], weight);
-                Edge e2 = Graph.Unite(_sections[destination], _sections[source], weight);
+                Node psNode = Graph.MakeNode();  // Начало главной
+                Node peNode = Graph.MakeNode();  // Конец главной
+                Node ssNode = Graph.MakeNode();  // Начало обратной
+                Node seNode = Graph.MakeNode();  // Конец обратной
+                Edge pEdge = Graph.Unite(psNode, peNode, float.PositiveInfinity); // Прямо
+                Edge sEdge = Graph.Unite(ssNode, seNode, float.PositiveInfinity); // Обратно
 
-                road = new Road(this, source, destination, e1, e2);
-                road.PrimaryLine.OnStreakRemove += Road_OnStreakRemove;
-                road.SlaveLine.OnStreakRemove += Road_OnStreakRemove;
-                if (OnSectionAdd != null)
-                {
-                    OnSectionAdd(road.Source);
-                    OnSectionAdd(road.Destination);
-                }
-                if (OnRoadAdd != null)
-                    OnRoadAdd(road);
-                road.PrimaryLine.AddStreak();
-                road.SlaveLine.AddStreak();
+                road = new Road(this, source, destination, pEdge, sEdge, weight);
+
                 _roads.Add(seg, road);
-
                 source.AddRoad(road);
                 destination.AddRoad(road);
+
+                road.PrimaryLine.AddStreak();
+                road.SlaveLine.AddStreak();
+
+                if (OnRoadAdd != null)
+                    OnRoadAdd(road);
             }
 
             return road;
@@ -131,14 +138,14 @@ namespace TrafficOptimizer.RoadMap
             if (_roads.ContainsKey(segment))
             {
                 Road r = _roads[segment];
-                r.PrimaryLine.OnStreakRemove -= Road_OnStreakRemove;
-                r.SlaveLine.OnStreakRemove -= Road_OnStreakRemove;
+
+                // Разделяем дороги (узлы удалятся автоматически)
+                Graph.Divide(r.PrimaryLine.Edge.Source, r.PrimaryLine.Edge.Destination);
+                Graph.Divide(r.SlaveLine.Edge.Source, r.SlaveLine.Edge.Destination);
 
                 r.Source.RemoveRoad(r);
                 r.Destination.RemoveRoad(r);
 
-                Graph.Divide(_sections[r.Source], _sections[r.Destination]);
-                Graph.Divide(_sections[r.Destination], _sections[r.Source]);
                 _roads.Remove(segment);
 
                 if (r.Source.RelatedRoads.Count() == 0)
@@ -173,27 +180,15 @@ namespace TrafficOptimizer.RoadMap
         {
             if (_roads.ContainsValue(road))
             {
-                Graph.ChangeWeight(_sections[road.Source], _sections[road.Destination], newWeight);
-                Graph.ChangeWeight(_sections[road.Destination], _sections[road.Source], newWeight);
+                road.ChangeWeight(newWeight);
                 if (OnRoadWeightChange != null)
                     OnRoadWeightChange(road);
             }
         }
 
-        private void Road_OnStreakRemove(Road road, Line line)
-        {
-            if (road.Streaks == 0)
-            {
-                RemoveRoad(GetSegment(road));
-            }
-            else if (line.Streaks.Count() == 0)
-            {
-                Graph.ChangeWeight(_sections[line.Source], _sections[line.Destination], float.PositiveInfinity);
-            }
-        }
-
         private void setRoadMap(Graph graph)
         {
+            SimulationTime = new TimeSpan(0, 0, 0);
             if (graph != null)
                 Graph = graph;
             else

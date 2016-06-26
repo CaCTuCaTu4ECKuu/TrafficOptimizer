@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph\IRatioProvider.cs" />
     <Compile Include="Graph\Utils\PathBuilder.cs" />
     <Compile Include="Graph\Model\Direction.cs" />
     <Compile Include="Graph\Model\Edge.cs" />
@@ -63,8 +64,8 @@
     <Compile Include="RoadMap2D\Transport\PointCar.cs" />
     <Compile Include="RoadMap2D\Transport\TrafficRegulation.cs" />
     <Compile Include="RoadMap2D\VehiclesMap.cs" />
-    <Compile Include="RoadMap\Model\StreaksLink.cs" />
-    <Compile Include="RoadMap\Model\Route.cs" />
+    <Compile Include="RoadMap\Model\LinePair.cs" />
+    <Compile Include="RoadMap\Route.cs" />
     <Compile Include="RoadMap\Model\SectionLink.cs" />
     <Compile Include="RoadMap\Model\Segment.cs" />
     <Compile Include="RoadMap\Model\Line.cs" />

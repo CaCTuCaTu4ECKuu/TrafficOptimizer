@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace TrafficOptimizer.Graph.Utils
@@ -7,6 +8,14 @@ namespace TrafficOptimizer.Graph.Utils
 
     public static class PathBuilder
     {
+        private class Cap : IRatioProvider
+        {
+            public float GetRatio(Edge edge)
+            {
+                return 1.0f;
+            }
+        }
+
         /// <summary>
         /// Находит кратчайший маршрут между указанными узлами
         /// </summary>
@@ -15,10 +24,10 @@ namespace TrafficOptimizer.Graph.Utils
         /// <param name="edges">Ребра, которые можно использовать для построения маршрута</param>
         /// <param name="task">Направление, которое необходимо найти</param>
         /// <returns>Маршрут</returns>
-        public static Path FindShortestPath(GraphRatioCollection ratio, List<Node> searchScope, Dictionary<Direction, Edge> edges, Direction task)
+        public static Path FindShortestPath(IRatioProvider ratio, IEnumerable<Node> searchScope, Dictionary<Direction, Edge> edges, Direction task)
         {
             if (ratio == null)
-                throw new ArgumentException("Ratio value can't be null");
+                ratio = new Cap();
 
             Path res = null;
 

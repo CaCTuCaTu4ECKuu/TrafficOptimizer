@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace TrafficOptimizer.Graph.Model
 {
-    [DebuggerDisplay("Source.ID => Destination.ID")]
+    [DebuggerDisplay("{Source.GetHashCode()}=>{Destination.GetHashCode()}")]
     [Serializable]
     public class Direction : IEquatable<Direction>
     {

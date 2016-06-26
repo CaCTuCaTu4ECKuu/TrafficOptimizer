@@ -40,7 +40,7 @@ namespace TrafficOptimizer.RoadMap.Model.Vehicles
         public float MoveRatio
         {
             get;
-            private set;
+            protected set;
         }
 
         /// <summary>

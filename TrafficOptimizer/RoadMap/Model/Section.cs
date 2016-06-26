@@ -7,9 +7,10 @@ using System.Diagnostics;
 
 namespace TrafficOptimizer.RoadMap.Model
 {
+    using Graph.Model;
     using Vehicles;
 
-    [DebuggerDisplay("[{ID}] In: {InRoads.Count()} Out: {OutRoads.Count()}")]
+    [DebuggerDisplay("In: {InRoads.Count()} Out: {OutRoads.Count()}")]
     public class Section : VehicleContainer
     {
         public RoadMap RoadMap
@@ -17,7 +18,24 @@ namespace TrafficOptimizer.RoadMap.Model
             get;
             private set;
         }
-        private List<Road> _relatedRoads;
+        /// <summary>
+        /// Узел графа, который представляет эту секцию как источник пути
+        /// </summary>
+        public Node Source
+        {
+            get;
+            private set;
+        }
+        /// <summary>
+        /// Узел графа, который представляет эту секцию как пункт назначения
+        /// </summary>
+        public Node Drain
+        {
+            get;
+            private set;
+        }
+
+        private List<Road> _relatedRoads = new List<Road>();
         /// <summary>
         /// Все дороги, которые проходят через эту секцию
         /// </summary>
@@ -45,7 +63,34 @@ namespace TrafficOptimizer.RoadMap.Model
         {
             get
             {
-                return _relatedRoads.Where(r => r.SlaveLine.Source == this);
+                return _relatedRoads.Where(r => r.PrimaryLine.Source == this);
+            }
+        }
+        private List<Node> _containedNodes;
+        public IEnumerable<Node> ContainedNodes
+        {
+            get
+            {
+                if (_containedNodes == null)
+                {
+                    _containedNodes = new List<Node>();
+                    _containedNodes.Add(Source);
+                    _containedNodes.Add(Drain);
+                    foreach (var r in _relatedRoads)
+                    {
+                        if (r.Destination == this)
+                        {
+                            _containedNodes.Add(r.PrimaryLine.Edge.Destination);
+                            _containedNodes.Add(r.SlaveLine.Edge.Source);
+                        }
+                        else
+                        {
+                            _containedNodes.Add(r.PrimaryLine.Edge.Source);
+                            _containedNodes.Add(r.SlaveLine.Edge.Destination);
+                        }
+                    }
+                }
+                return _containedNodes;
             }
         }
 
@@ -82,28 +127,35 @@ namespace TrafficOptimizer.RoadMap.Model
             return float.PositiveInfinity;
         }
 
-        private Dictionary<StreaksLink, VehicleContainer> _links 
-            = new Dictionary<StreaksLink, VehicleContainer>();
+        private Dictionary<LinePair, SectionLink> _lineLinks = new Dictionary<LinePair, SectionLink>();
 
         /// <summary>
-        /// Можно ли проехать к месту назначения из источника через этот узел
+        /// Можно ли проехать к месту назначения из источника через этот узел.
+        /// Если это две полосы, то также проверяет есть ли путь между ними
         /// </summary>
         /// <param name="src">Начало</param>
         /// <param name="dst">Место назначения</param>
         public override bool AllowToMove(VehicleContainer src,  VehicleContainer dst)
         {
             // Только если указаны 2 streak-а нужно проверять есть ли между ними связь
-            bool linked = true;
             if (src.GetType() == typeof(Streak) && dst.GetType() == typeof(Streak))
-                return _links.ContainsKey(new StreaksLink((Streak)src, (Streak)dst));
-            return base.AllowToMove(src, dst) && linked;
+            {
+                LinePair pair = new LinePair(((Streak)src).Line, ((Streak)dst).Line);
+                if (_lineLinks.ContainsKey(pair))
+                    return _lineLinks[pair].AllowToMove(src, dst);
+                return false;
+            }
+            
+            return base.AllowToMove(src, dst);
         }
 
-        public Section(RoadMap map, IEnumerable<Road> relatedRoads)
+        public Section(RoadMap map, Node source, Node drain, IEnumerable<Road> relatedRoads)
             : base((VehicleContainer)null)
         {
             RoadMap = map;
-            _relatedRoads = new List<Road>();
+            Source = source;
+            Drain = drain;
+
             if (relatedRoads != null)
             {
                 foreach (var r in relatedRoads)
@@ -115,51 +167,164 @@ namespace TrafficOptimizer.RoadMap.Model
         private void RoadChanged(Road road, Line line)
         {
             _destinations = null;
+            _containedNodes = null;
         }
         public void AddRoad(Road road)
         {
             if (!_relatedRoads.Contains(road))
             {
+                if (road.Source == this)
+                {
+                    // Дорога выходит отсюда
+                    // Задает в графе путь от этой секции на выходящую сторону движения
+                    RoadMap.Graph.Unite(Source, road.PrimaryLine.Edge.Source, 0);
+                    // Задает в графе путь от входящей стороны движения в эту секцию
+                    RoadMap.Graph.Unite(road.SlaveLine.Edge.Destination, Drain, 0);
+                }
+                else
+                {
+                    // Дорога идет сюда
+                    // Задает в графе путь от входящей полосы к этой секции
+                    RoadMap.Graph.Unite(road.PrimaryLine.Edge.Destination, Drain, 0);
+                    // Задает в графе путь от этой секции к выходящей полосе
+                    RoadMap.Graph.Unite(Source, road.SlaveLine.Edge.Source, 0);
+                }
+
                 _relatedRoads.Add(road);
                 road.PrimaryLine.OnStreakAdd += RoadChanged;
                 road.PrimaryLine.OnStreakRemove += RoadChanged;
                 road.SlaveLine.OnStreakAdd += RoadChanged;
                 road.SlaveLine.OnStreakRemove += RoadChanged;
+                RoadChanged(null, null);
             }
         }
         public void RemoveRoad(Road road)
         {
             if (_relatedRoads.Contains(road))
             {
+                if (road.Source == this)
+                {
+                    // Дорога выходит отсюда
+                    // Задает в графе путь от этой секции на выходящую сторону движения
+                    RoadMap.Graph.Divide(Source, road.PrimaryLine.Edge.Source);
+                    // Задает в графе путь от входящей стороны движения в эту секцию
+                    RoadMap.Graph.Divide(road.SlaveLine.Edge.Destination, Drain);
+                }
+                else
+                {
+                    // Дорога идет сюда
+                    // Задает в графе путь от входящей полосы к этой секции
+                    RoadMap.Graph.Divide(road.PrimaryLine.Edge.Destination, Drain);
+                    // Задает в графе путь от этой секции к выходящей полосе
+                    RoadMap.Graph.Divide(Source, road.SlaveLine.Edge.Source);
+                }
+
                 _relatedRoads.Remove(road);
                 road.PrimaryLine.OnStreakAdd -= RoadChanged;
                 road.PrimaryLine.OnStreakRemove -= RoadChanged;
                 road.SlaveLine.OnStreakAdd -= RoadChanged;
                 road.SlaveLine.OnStreakRemove -= RoadChanged;
+                RoadChanged(null, null);
             }
         }
 
-        public void Link(Streak src, Streak dst, float length = 0, float moveRatio = 1f)
+        public void SetLink(Line src, Line dst, float moveRatio = 1.0f, float length = 0)
         {
-            if (Destinations.Contains(dst))
+            if (src.Destination == this && Destinations.Contains(dst.Destination))
             {
-                if (src.Destinations.Contains(this) && this.Destinations.Contains(dst))
+                LinePair pair = new LinePair(src, dst);
+                if (!_lineLinks.ContainsKey(pair))
                 {
-                    StreaksLink link = new StreaksLink(src, dst);
-                    if (!_links.ContainsKey(link))
-                        _links.Add(link, new SectionLink(dst, moveRatio, length));
-                    RoadChanged(null, null);
+                    Edge e = RoadMap.Graph.Unite(src.Edge.Destination, dst.Edge.Source, length);
+                    _lineLinks.Add(pair, new SectionLink(this, e, moveRatio));
+                    src.OnStreakAdd += Link_OnStreakAdd;
+                    src.OnStreakRemove += Link_OnStreakRemove;
+                    dst.OnStreakAdd += Link_OnStreakAdd;
+                    dst.OnStreakRemove += Link_OnStreakRemove;
                 }
                 else
-                    throw new ApplicationException("Одна из дорог не связана с этой секцией");
+                    throw new NotImplementedException("Эти стороны движения уже связаны");
             }
+            else
+                throw new ArgumentException("Одна из дорог не связана с этой секцией");
+        }
+
+        private void Link_OnStreakRemove(Road road, Line line)
+        {
+            if (line.Streaks.Count() == 0)
+            {
+                //TODO: проверить что я все правильно написал
+                foreach (var link in _lineLinks)
+                {
+                    if (link.Value.Edge.Source == line.Edge.Destination 
+                        || link.Value.Edge.Destination == line.Edge.Source)
+                    {
+                        RoadMap.Graph.ChangeWeight(link.Value.Edge, float.PositiveInfinity);
+                    }
+                }
+            }
+        }
+
+        private void Link_OnStreakAdd(Road road, Line line)
+        {
+            if (line.Streaks.Count() == 1)
+            {
+                //TODO: проверить что я все правильно написал
+                foreach (var link in _lineLinks)
+                {
+                    if (link.Value.Edge.Source == line.Edge.Destination
+                        || link.Value.Edge.Destination == line.Edge.Source)
+                    {
+                        RoadMap.Graph.ChangeWeight(link.Value.Edge, line.Length);
+                    }
+                }
+            }
+        }
+
+        public void UnsetLink(Line src, Line dst)
+        {
+            LinePair pair = new LinePair(src, dst);
+            if (_lineLinks.ContainsKey(pair))
+            {
+                RoadMap.Graph.Divide(src.Edge.Destination, dst.Edge.Source);
+                _lineLinks.Remove(pair);
+                src.OnStreakAdd -= Link_OnStreakAdd;
+                src.OnStreakRemove -= Link_OnStreakRemove;
+                dst.OnStreakAdd -= Link_OnStreakAdd;
+                dst.OnStreakRemove -= Link_OnStreakRemove;
+            }
+        }
+        /*
+        public void Link(Streak src, Streak dst)
+        {
+            LinePair pair = new LinePair(src.Line, dst.Line);
+            if (_lineLinks.ContainsKey(pair))
+            {
+                _lineLinks[pair].Link(src, dst);
+                RoadChanged(null, null);
+            }
+            else
+                throw new ApplicationException("Lines not linked yet");
         }
         public void Unlink(Streak src, Streak dst)
         {
-            StreaksLink link = new StreaksLink(src, dst);
-            _links.Remove(link);
-            RoadChanged(null, null);
+            LinePair pair = new LinePair(src.Line, dst.Line);
+            if (_lineLinks.ContainsKey(pair))
+            {
+                _lineLinks[pair].Unlink(src, dst);
+                RoadChanged(null, null);
+            }
         }
+        public void UnlinkAll()
+        {
+            while (_lineLinks.Count > 0)
+            {
+                Edge e = _lineLinks.ElementAt(0).Value.Edge;
+                RoadMap.Graph.Divide(e.Source, e.Destination);
+                _lineLinks.Remove(_lineLinks.ElementAt(0).Key);
+            }
+        }
+        */
     }
     // TODO: Добавить Enumerator для Links чтобы можно было смотреть связи по индексу
 }

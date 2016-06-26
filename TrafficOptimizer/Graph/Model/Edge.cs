@@ -6,7 +6,7 @@ namespace TrafficOptimizer.Graph.Model
     /// <summary>
     /// Ребро графа
     /// </summary>
-    [DebuggerDisplay("[{ID}] - [{Source.ID} => {Destination.ID}] ({Weight})")]
+    [DebuggerDisplay("{Source.GetHashCode()}=>{Destination.GetHashCode()} ({Weight})")]
     [Serializable]
     public class Edge
     {

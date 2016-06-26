@@ -8,7 +8,7 @@ namespace TrafficOptimizer.Graph
 {
     using Model;
 
-    public class GraphRatioCollection
+    public class GraphRatioCollection : IRatioProvider
     {
         public Graph BaseGraph
         {

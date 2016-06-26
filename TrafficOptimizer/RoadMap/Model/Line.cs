@@ -62,6 +62,7 @@ namespace TrafficOptimizer.RoadMap.Model
         public void AddStreak()
         {
             Streak newStreak = new Streak(this, null);
+            newStreak.AddDestination(Destination);
             if (_streaks.Count > 0)
             {
                 Streak last = _streaks[_streaks.Count - 1];

@@ -12,6 +12,6 @@ namespace TrafficOptimizer.RoadMap.RatioControls
         /// </summary>
         /// <param name="moment">Время моделирования, на которое необходимо получить коэффициенты</param>
         /// <returns></returns>
-        Dictionary<VehicleContainer, float> GetRatioCollection(DateTime moment, List<VehicleContainer> subjects);
+        Dictionary<VehicleContainer, float> GetRatioCollection(List<VehicleContainer> subjects, TimeSpan? simulationMoment = null);
     }
 }

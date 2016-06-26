@@ -72,8 +72,8 @@ namespace TrafficOptimizer.RoadMap2D
         {
             if (!Tools.IsRoundsIntersect(start, RoadMapParametrs.StreakSize, end, RoadMapParametrs.StreakSize))
             {
-                Section src = GetIntersectedSection(start) ?? RoadMap.MakeSection();
-                Section dst = GetIntersectedSection(end) ?? RoadMap.MakeSection();
+                Section src = GetIntersectedSection(start) ?? RoadMap.MakeSection(null);
+                Section dst = GetIntersectedSection(end) ?? RoadMap.MakeSection(null);
                 Road r = RoadMap.SetRoad(src, dst, Tools.Distance(start, end));
 
                 if (!_sections.ContainsKey(src))

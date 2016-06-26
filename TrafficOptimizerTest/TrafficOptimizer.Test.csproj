@@ -59,7 +59,7 @@
     <Compile Include="GraphTest\PathBuilderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoadMapTest\RoadMapTest.cs" />
-    <Compile Include="RoadMapTest\SegmentTest.cs" />
+    <Compile Include="RoadMapTest\RouteTest.cs" />
     <Compile Include="ToolsTest\ToolsTest.cs" />
   </ItemGroup>
   <ItemGroup>

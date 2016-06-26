@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrafficOptimizer.RoadMap.Model
+namespace TrafficOptimizer.RoadMap
 {
-    using Vehicles;
+    using Model;
+    using Model.Vehicles;
     using RatioControls;
 
     public class Route
@@ -29,7 +30,7 @@ namespace TrafficOptimizer.RoadMap.Model
                 if (IsRouteSolid())
                 {
                     res = 0;
-                    for (int c = 0; c < _path.Count - 2; c++)
+                    for (int c = 0; c <= _path.Count - 2; c++)
                     {
                         res += _path[c].LengthTo(_path[c + 1]);
                         if (res >= float.PositiveInfinity)
@@ -76,7 +77,7 @@ namespace TrafficOptimizer.RoadMap.Model
             }
             else if (ttype == typeof(SectionLink))
             {
-                tSection = ((Streak)target.Destinations.FirstOrDefault()).Line.Destination;
+                tSection = ((SectionLink)target).Section;
             }
 
             if (target == Destination)
@@ -104,14 +105,16 @@ namespace TrafficOptimizer.RoadMap.Model
         public void BuildRoute(RatioCollection ratio, Section source)
         {
             var map = source.RoadMap;
-            var path = map.Graph.FindPath(null, map.GetNode(source), map.GetNode(Destination));
+            var path = map.Graph.FindPath(ratio, source.Source, Destination.Drain);
             if (path.IsSolid)
             {
                 _path = new List<Section>();
                 _path.Add(source);
                 foreach (var e in path)
                 {
-                    _path.Add(map.GetSection(e.Destination));
+                    Section s = map.GetSection(e.Destination);
+                    if (_path[_path.Count - 1] != s)
+                        _path.Add(s);
                 }
             }
             else

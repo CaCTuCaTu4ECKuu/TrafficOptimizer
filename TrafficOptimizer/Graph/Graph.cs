@@ -11,12 +11,16 @@ namespace TrafficOptimizer.Graph
     /// <summary>
     /// Граф
     /// </summary>
-    [DebuggerDisplay("[{ID}] - Nodes: {_nodes.Count}, Edges: {_edges.Count}")]
+    [DebuggerDisplay("Nodes: {_nodes.Count}, Edges: {_edges.Count}")]
     [Serializable]
     public class Graph
     {
         private List<Node> _nodes = new List<Node>();
         private Dictionary<Direction, Edge> _edges = new Dictionary<Direction, Edge>();
+        public bool NodeExists(Node n)
+        {
+            return _nodes.Contains(n);
+        }
 
         #region Nodes & Edges
         /// <summary>
@@ -104,6 +108,13 @@ namespace TrafficOptimizer.Graph
                 e.Weight = newWeight;
             }
         }
+        public void ChangeWeight(Edge e, float newWeight)
+        {
+            if (_edges.ContainsValue(e))
+            {
+                e.Weight = newWeight;
+            }
+        }
 
         public Edge GetEdge(Direction direction)
         {
@@ -128,21 +139,21 @@ namespace TrafficOptimizer.Graph
         #endregion
 
         #region Pathes
-        public Path FindPath(GraphRatioCollection ratio, Node src, Node dst)
+        public Path FindPath(IRatioProvider ratio, Node src, Node dst)
         {
             return PathBuilder.FindShortestPath(ratio, _nodes, _edges, new Direction(src, dst));
         }
-        public Path FindPath(GraphRatioCollection ratio, Node src, Node dst, List<Edge> restricked)
+        public Path FindPath(IRatioProvider ratio, Node src, Node dst, List<Edge> restricked)
         {
             Dictionary<Direction, Edge> allowedEdges = _edges.Where(e => !restricked.Contains(e.Value)).ToDictionary(e => e.Key, e => e.Value);
             return PathBuilder.FindShortestPath(ratio, _nodes, allowedEdges, new Direction(src, dst));
 
         }
-        public Path FindPath(GraphRatioCollection ratio, List<Node> scope, Node src, Node dst)
+        public Path FindPath(IRatioProvider ratio, List<Node> scope, Node src, Node dst)
         {
             return PathBuilder.FindShortestPath(ratio, scope, _edges, new Direction(src, dst));
         }
-        public Path FindPath(GraphRatioCollection ratio, List<Node> scope, Node src, Node dst, List<Edge> restricked)
+        public Path FindPath(IRatioProvider ratio, List<Node> scope, Node src, Node dst, List<Edge> restricked)
         {
             if (scope.Contains(src) && scope.Contains(dst))
             {
